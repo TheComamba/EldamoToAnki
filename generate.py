@@ -169,22 +169,33 @@ def remove_duplication_marker(word):
     word["tolkienian_word"] = word["tolkienian_word"].replace("⁹", "")
     word["tolkienian_word"] = word["tolkienian_word"].replace("⁰", "")
 
-def find_duplicates(all_words, word_input):
+def find_tolkienian_duplicates(all_words, word_input):
     duplicates = []
     for word_iter in all_words:
-        if are_duplicates(word_input, word_iter):
+        if are_tolkienian_duplicates(word_input, word_iter):
             duplicates.append(word_iter)
-    if len(duplicates) > 1:
-        return duplicates
-    else:
-        return []
+    return duplicates
 
-def are_duplicates(word1, word2):
+def are_tolkienian_duplicates(word1, word2):
     if word1.get("tolkienian_word") != word2.get("tolkienian_word"):
         return False
     if word1.get("stem") != word2.get("stem"):
         return False
     if word1.get("extra_info") != word2.get("extra_info"):
+        return False
+    return True
+
+def find_english_duplicates(all_words, word_input):
+    duplicates = []
+    for word_iter in all_words:
+        if are_english_duplicates(word_input, word_iter):
+            duplicates.append(word_iter)
+    return duplicates
+    
+def are_english_duplicates(word1, word2):
+    if word1.get("english_word") != word2.get("english_word"):
+        return False
+    if word1.get("part_of_speech") != word2.get("part_of_speech"):
         return False
     return True
 
@@ -196,16 +207,26 @@ def is_field_unique(duplicates, word, field):
             return False
     return True
 
+def is_field_same_for_all(duplicates, field):
+    for word in duplicates:
+        if word.get(field) != duplicates[0].get(field):
+            return False
+    return True
+
 def add_uniqueness_via_field(duplicates, field):
     for word in duplicates:
-        if is_field_unique(duplicates, word, field):
-            word["extra_info"] = word.get(field)
-            duplicates.remove(word)
-            return add_uniqueness_via_field(duplicates, field)
+        if not is_field_same_for_all(duplicates, field) and word.get(field) is not None:
+            if word.get("extra_info") is None:
+                word["extra_info"] = ""
+            else:
+                word["extra_info"] += ", "
+            word["extra_info"] += word.get(field)
 
-def make_duplicates_unique(duplicates):
+def make_tolkienian_duplicates_unique(duplicates):
     add_uniqueness_via_field(duplicates, "part_of_speech")
+    duplicates = find_tolkienian_duplicates(duplicates, duplicates[0])
     add_uniqueness_via_field(duplicates, "category")
+    duplicates = find_tolkienian_duplicates(duplicates, duplicates[0])
 
     if len(duplicates) > 1:
         print("Found ", len(duplicates), " duplicates for ", duplicates[0].get("tolkienian_word"))
@@ -215,9 +236,13 @@ def remove_duplications(all_words):
     for word in all_words:
         remove_duplication_marker(word)
     for word in all_words:
-        duplicates = find_duplicates(all_words, word)
-        if len(duplicates) > 1:
-            make_duplicates_unique(duplicates)
+        tolkienian_duplicates = find_tolkienian_duplicates(all_words, word)
+        if len(tolkienian_duplicates) > 1:
+            make_tolkienian_duplicates_unique(tolkienian_duplicates)
+        english_duplicates = find_english_duplicates(all_words, word)
+        #if len(english_duplicates) > 1:
+            # print("Found ", len(english_duplicates), " duplicates for ", english_duplicates[0].get("english_word"))
+            # TODO: implement more
 
 def format_word(word):
     tolkienian = word.get("tolkienian_word")
