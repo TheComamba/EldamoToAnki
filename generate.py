@@ -203,14 +203,6 @@ def are_english_duplicates(word1, word2):
         return False
     return True
 
-def is_field_unique(duplicates, word, field):
-    for other_word in duplicates:
-        if other_word == word:
-            continue
-        if other_word.get(field) == word.get(field):
-            return False
-    return True
-
 def is_field_same_for_all(duplicates, field):
     for word in duplicates:
         if word.get(field) != duplicates[0].get(field):
