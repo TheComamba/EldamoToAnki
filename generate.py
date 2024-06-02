@@ -177,6 +177,8 @@ def find_tolkienian_duplicates(all_words, word_input):
     return duplicates
 
 def are_tolkienian_duplicates(word1, word2):
+    if word1.get("tolkienian_word") is None or word2.get("tolkienian_word") is None:
+        return False
     if word1.get("tolkienian_word") != word2.get("tolkienian_word"):
         return False
     if word1.get("stem") != word2.get("stem"):
@@ -193,6 +195,8 @@ def find_english_duplicates(all_words, word_input):
     return duplicates
     
 def are_english_duplicates(word1, word2):
+    if word1.get("english_word") is None or word2.get("english_word") is None:
+        return False
     if word1.get("english_word") != word2.get("english_word"):
         return False
     if word1.get("part_of_speech") != word2.get("part_of_speech"):

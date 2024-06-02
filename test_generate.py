@@ -1,7 +1,67 @@
 import unittest
-from generate import add_uniqueness_via_field, format_word, parse_args, main
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, parse_args, main
 
 class TestGenerate(unittest.TestCase):
+    def test_words_are_tolkienian_duplicates(self):
+        word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
+
+        no_tolkienian = word.copy()
+        no_tolkienian["tolkienian_word"] = None
+        self.assertFalse(are_tolkienian_duplicates(word, no_tolkienian))
+
+        other_tolkienian = word.copy()
+        other_tolkienian["tolkienian_word"] = "other"
+        self.assertFalse(are_tolkienian_duplicates(word, other_tolkienian))
+
+        other_english = word.copy()
+        other_english["english_word"] = "other"
+        self.assertTrue(are_tolkienian_duplicates(word, other_english))
+
+        other_stem = word.copy()
+        other_stem["stem"] = "other"
+        self.assertFalse(are_tolkienian_duplicates(word, other_stem))
+
+        other_extra = word.copy()
+        other_extra["extra_info"] = "other"
+        self.assertFalse(are_tolkienian_duplicates(word, other_extra))
+
+        other_pos = word.copy()
+        other_pos["part_of_speech"] = "other"
+        self.assertTrue(are_tolkienian_duplicates(word, other_pos))
+
+    def test_words_are_english_duplicates(self):
+        word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
+
+        no_english = word.copy()
+        no_english["english_word"] = None
+        self.assertFalse(are_english_duplicates(word, no_english))
+
+        other_tolkienian = word.copy()
+        other_tolkienian["tolkienian_word"] = "other"
+        self.assertTrue(are_english_duplicates(word, other_tolkienian))
+
+        other_english = word.copy()
+        other_english["english_word"] = "other"
+        self.assertFalse(are_english_duplicates(word, other_english))
+
+        other_stem = word.copy()
+        other_stem["stem"] = "other"
+        self.assertTrue(are_english_duplicates(word, other_stem))
+
+        other_extra = word.copy()
+        other_extra["extra_info"] = "other"
+        self.assertTrue(are_english_duplicates(word, other_extra))
+
+        other_pos = word.copy()
+        other_pos["part_of_speech"] = "other"
+        self.assertFalse(are_english_duplicates(word, other_pos))
+    
+    def test_invalid_words_are_not_duplicates(self):
+        word = {"tolkienian_word": None, "english_word": None, "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
+
+        self.assertFalse(are_tolkienian_duplicates(word, word))
+        self.assertFalse(are_english_duplicates(word, word))
+
     def test_adding_uniqueness_via_field_with_all_the_same_adds_nothing(self):
         words = [
             {"tolkienian_word": "sívë", "english_word": "knowing", "test": "test"},
