@@ -334,7 +334,7 @@ def print_parts_of_speech(filtered_words):
     included_speech_values = [word.get('speech') for word in filtered_words]
     included_speech_values = list(set(included_speech_values))  # Remove duplicates
     included_speech_values.sort()
-    print("Collected ", len(filtered_words) ," cards of the following speech types:\n", included_speech_values)
+    print("Collected cards of the following part of speech types:\n", included_speech_values)
 
 def main(args):
     languages = get_languages_to_generate(args)
@@ -358,6 +358,7 @@ def main(args):
         word_maps = words_to_maps(filtered_words, filtered_words, categories, args)
 
         word_maps = remove_duplications(word_maps)
+        print("Collected ", len(word_maps), " cards")
 
         formatted_words = format_words(word_maps)
 
