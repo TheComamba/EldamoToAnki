@@ -22,7 +22,6 @@ SPEECH_EXCLUDES = ["grammar", "phoneme", "phonetic-rule", "phonetic-group", "pho
 
 DELIMITER = "|"
 
-# TODO: If neo words is active, prefer ngloss over gloss.
 # TODO: Can we update the cards instead of reimporting them?
 # TODO: Make language argument positional.
 
@@ -108,20 +107,24 @@ def find_referenced_word(referencer, all_words):
             return word
     return None
 
-def find_translation(all_words, word):
-    english_word = word.get('gloss')
+def find_translation(all_words, word, args):
+    english_word = None
+    if args.neo_words:
+        english_word = word.get('ngloss')
+    if english_word is None:
+        english_word = word.get('gloss')
     if english_word is None:
         referenced_word = find_referenced_word(word, all_words)
         if referenced_word is not None:
-            english_word = find_translation(all_words, referenced_word)
+            english_word = find_translation(all_words, referenced_word, args)
     return english_word
 
-def format_word(all_words, word):
+def format_word(all_words, word, args):
     tolkienian_word = word.get('v')
     if tolkienian_word is None:
         print("Skipping word without value: ")
         debug_print_word(word)
-    english_word = find_translation(all_words, word)
+    english_word = find_translation(all_words, word, args)
     if english_word is None:
         print("Skipping word without translation: ", tolkienian_word)
     part_of_speech = word.get('speech')
@@ -144,7 +147,7 @@ def write_to_file(args, languages, words):
 
     with open(filename, 'w') as f:
         for word in words:
-            formatted_word = format_word(words, word)
+            formatted_word = format_word(words, word, args)
             f.write(formatted_word)
     
     print("Written output to ", filename)
