@@ -222,20 +222,19 @@ def invalidate_word(word):
     word["tolkienian_word"] = None
     word["english_word"] = None
 
-def merge_tolkienian_duplicates(duplicates):
-    # TODO: This is currently buggy.
-    english_meanings = [word.get("english_word") for word in duplicates if word.get("english_word") is not None]
-    english_meanings.sort()
+def merge_duplicates(duplicates, field_to_merge):
+    values_to_merge = [word.get(field_to_merge) for word in duplicates if word.get(field_to_merge) is not None]
+    values_to_merge.sort()
     counter = 1
-    translation = ""
-    for meaning in english_meanings:
+    merged_values = ""
+    for meaning in values_to_merge:
         if counter > 1:
-            translation += "; "
-        translation += f"({counter}) {meaning}"
+            merged_values += "; "
+        merged_values += f"({counter}) {meaning}"
         counter += 1
     for i in range(0, len(duplicates)):
         if i == 0:
-            duplicates[i]["english_word"] = translation
+            duplicates[i][field_to_merge] = merged_values
         else:
             invalidate_word(duplicates[i])
 
@@ -246,7 +245,7 @@ def make_tolkienian_duplicates_unique(duplicates):
     duplicates = find_tolkienian_duplicates(duplicates, duplicates[0])
 
     if len(duplicates) > 1:
-        merge_tolkienian_duplicates(duplicates)
+        merge_duplicates(duplicates, "english_word")
 
 def remove_duplications(all_words):
     for word in all_words:
@@ -258,9 +257,8 @@ def remove_duplications(all_words):
         if len(tolkienian_duplicates) > 1:
             make_tolkienian_duplicates_unique(tolkienian_duplicates)
         english_duplicates = find_english_duplicates(all_words, word)
-        #if len(english_duplicates) > 1:
-            # print("Found ", len(english_duplicates), " duplicates for ", english_duplicates[0].get("english_word"))
-            # TODO: implement more
+        if len(english_duplicates) > 1:
+            merge_duplicates(english_duplicates, "tolkienian_word")
     all_words = [word for word in all_words if word.get("tolkienian_word") is not None]
     return all_words
 
