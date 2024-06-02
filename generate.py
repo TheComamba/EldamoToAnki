@@ -120,7 +120,15 @@ def find_translation(all_words, word, args):
             english_word = find_translation(all_words, referenced_word, args)
     return english_word
 
-def word_to_map(all_words, word, args):
+def get_category(word, categories):
+    category_id = word.get('cat')
+    if category_id is not None:
+        for cat in categories:
+            if category_id.startswith(cat.get("id")):
+                return cat.get("label")
+    return None
+
+def word_to_map(all_words, word, categories, args):
     word_map = {}
     word_map["tolkienian_word"] = word.get('v')
     if word_map.get("tolkienian_word") is None:
@@ -133,6 +141,7 @@ def word_to_map(all_words, word, args):
         return None
     word_map["part_of_speech"] = word.get('speech')
     word_map["stem"] = word.get('stem')
+    word_map["category"] = get_category(word, categories)
 
     for key in word_map.keys():
         if word_map.get(key) is not None:
@@ -140,10 +149,10 @@ def word_to_map(all_words, word, args):
 
     return word_map
 
-def words_to_maps(all_words, words, args):
+def words_to_maps(all_words, words, categories, args):
     word_maps = []
     for word in words:
-        word_map = word_to_map(all_words, word, args)
+        word_map = word_to_map(all_words, word, categories, args)
         if word_map is not None:
             word_maps.append(word_map)
     return word_maps
@@ -179,20 +188,25 @@ def are_duplicates(word1, word2):
         return False
     return True
 
-def has_unique_word_class(duplicates, word):
+def is_field_unique(duplicates, word, field):
     for other_word in duplicates:
         if other_word == word:
             continue
-        if other_word.get("part_of_speech") == word.get("part_of_speech"):
+        if other_word.get(field) == word.get(field):
             return False
     return True
 
-def make_duplicates_unique(duplicates):
+def add_uniqueness_via_field(duplicates, field):
     for word in duplicates:
-        if has_unique_word_class(duplicates, word):
-            word["extra_info"] = word.get("part_of_speech")
+        if is_field_unique(duplicates, word, field):
+            word["extra_info"] = word.get(field)
             duplicates.remove(word)
-    
+            return add_uniqueness_via_field(duplicates, field)
+
+def make_duplicates_unique(duplicates):
+    add_uniqueness_via_field(duplicates, "part_of_speech")
+    add_uniqueness_via_field(duplicates, "category")
+
     if len(duplicates) > 1:
         print("Found ", len(duplicates), " duplicates for ", duplicates[0].get("tolkienian_word"))
     # TODO: implement more
@@ -258,23 +272,25 @@ def print_parts_of_speech(filtered_words):
 def main():
     args = parse_args()
 
+    languages = get_languages_to_generate(args)
+    print("Generating cards for the following languages: ", [lang.get("name") for lang in languages])
+    language_ids = [lang.get("id") for lang in languages]
+    speech_types_to_exclude = get_speech_types_to_exclude(args)
+
     ensure_endamo_data(args)
     root = read_endamo_data()
     if root is not None:
+        categoriy_entries = root.findall(".//cat-group")
+        categories = [{ "id": cat.get("id"), "label": cat.get("label") }  for cat in categoriy_entries]
+
         words = root.findall(".//word")
-
-        languages = get_languages_to_generate(args)
-        print("Generating cards for the following languages: ", [lang.get("name") for lang in languages])
-
-        language_ids = [lang.get("id") for lang in languages]
+        
         filtered_words = [word for word in words if word.get('l') in language_ids]
-
-        speech_types_to_exclude = get_speech_types_to_exclude(args)
         filtered_words = [word for word in filtered_words if word.get('speech') not in speech_types_to_exclude]
         
         print_parts_of_speech(filtered_words)
 
-        word_maps = words_to_maps(filtered_words, filtered_words, args)
+        word_maps = words_to_maps(filtered_words, filtered_words, categories, args)
 
         remove_duplications(word_maps)
 
