@@ -120,22 +120,42 @@ def find_translation(all_words, word, args):
             english_word = find_translation(all_words, referenced_word, args)
     return english_word
 
-def format_word(all_words, word, args):
-    tolkienian_word = word.get('v')
-    if tolkienian_word is None:
+def word_to_map(all_words, word, args):
+    word_map = {}
+    word_map["tolkienian_word"] = word.get('v')
+    if word_map.get("tolkienian_word") is None:
         print("Skipping word without value: ")
         debug_print_word(word)
-    english_word = find_translation(all_words, word, args)
-    if english_word is None:
-        print("Skipping word without translation: ", tolkienian_word)
-    part_of_speech = word.get('speech')
+        return None
+    word_map["english_word"] = find_translation(all_words, word, args)
+    if word_map.get("english_word") is None:
+        print("Skipping word without translation: ", word_map.get("tolkienian_word"))
+        return None
+    word_map["part_of_speech"] = word.get('speech')
+    return word_map
 
-    formatted_word = f"{tolkienian_word}{DELIMITER}{english_word}"
+def format_word(all_words, word, args):
+    word_map = word_to_map(all_words, word, args)
+    if word_map is None:
+        return None
+    tolkienian = word_map.get("tolkienian_word")
+    english = word_map.get("english_word")
+    part_of_speech = word_map.get("part_of_speech")
+
+    formatted_word = f"{tolkienian}{DELIMITER}{english}"
     if part_of_speech is not None:
         formatted_word += f" ({part_of_speech})"
     formatted_word += "\n"
     
     return formatted_word
+
+def format_words(all_words, words, args):
+    formatted_words = []
+    for word in words:
+        formatted_word = format_word(all_words, word, args)
+        if formatted_word is not None:
+            formatted_words.append(formatted_word)
+    return formatted_words
 
 def write_to_file(args, languages, words):
     language_name = languages[0].get("name")
@@ -148,8 +168,7 @@ def write_to_file(args, languages, words):
 
     with open(filename, 'w') as f:
         for word in words:
-            formatted_word = format_word(words, word, args)
-            f.write(formatted_word)
+            f.write(word)
     
     print("Written output to ", filename)
 
@@ -175,7 +194,9 @@ def main():
         included_speech_values.sort()
         print("Collected ", len(filtered_words) ," cards of the following speech types:\n", included_speech_values)
 
-        write_to_file(args, languages, filtered_words)
+        formatted_words = format_words(words, filtered_words, args)
+
+        write_to_file(args, languages, formatted_words)
     else:
         raise ValueError("Could not read Eldamo data")
 
