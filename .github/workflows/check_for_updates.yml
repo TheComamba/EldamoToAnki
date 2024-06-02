@@ -1,0 +1,24 @@
+name: Check for updates
+
+on:
+    schedule:
+      - cron: "0 0 * * 5" # every friday at 00:00 UTC
+
+jobs:
+    checkForUpdates:
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v2
+
+        - name: Generate wordlists
+          run: ./generate_all.sh
+
+        - name: Check for unstaged changes
+          run: |
+                if [[ `git status --porcelain` ]]; then
+                    echo "This repository needs to be updated. Please run ./generate_all.sh and commit the changes."
+                    git diff
+                    exit 1
+                fi
+
