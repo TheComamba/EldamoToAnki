@@ -26,8 +26,6 @@ SPEECH_EXCLUDES = ["grammar", "phoneme", "phonetic-rule", "phonetic-group", "pho
 
 DELIMITER = "|"
 
-# TODO: Can we update the cards instead of reimporting them?
-
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate text files that are easily imported with Anki.')
     parser.add_argument('language', type=str, help='Language to generate')
