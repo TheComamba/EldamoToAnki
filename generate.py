@@ -160,6 +160,7 @@ def format_words(words):
         formatted_word = format_word(word)
         if formatted_word is not None:
             formatted_words.append(formatted_word)
+    formatted_words.sort()
     return formatted_words
 
 def write_to_file(args, languages, words):
