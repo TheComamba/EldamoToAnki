@@ -160,38 +160,65 @@ def remove_duplication_marker(word):
     word["tolkienian_word"] = word["tolkienian_word"].replace("⁹", "")
     word["tolkienian_word"] = word["tolkienian_word"].replace("⁰", "")
 
-def find_duplicates(all_words, tolkienian_word):
+def find_duplicates(all_words, word_input):
     duplicates = []
-    for word in all_words:
-        if word.get("tolkienian_word") == tolkienian_word:
-            duplicates.append(word)
+    for word_iter in all_words:
+        if are_duplicates(word_input, word_iter):
+            duplicates.append(word_iter)
     if len(duplicates) > 1:
         return duplicates
     else:
         return []
 
+def are_duplicates(word1, word2):
+    if word1.get("tolkienian_word") != word2.get("tolkienian_word"):
+        return False
+    if word1.get("stem") != word2.get("stem"):
+        return False
+    if word1.get("extra_info") != word2.get("extra_info"):
+        return False
+    return True
+
+def has_unique_word_class(duplicates, word):
+    for other_word in duplicates:
+        if other_word == word:
+            continue
+        if other_word.get("part_of_speech") == word.get("part_of_speech"):
+            return False
+    return True
+
 def make_duplicates_unique(duplicates):
-    print("Found ", len(duplicates), " duplicates for ", duplicates[0].get("tolkienian_word"))
-    # TODO: implement
+    for word in duplicates:
+        if has_unique_word_class(duplicates, word):
+            word["extra_info"] = word.get("part_of_speech")
+            duplicates.remove(word)
+    
+    if len(duplicates) > 1:
+        print("Found ", len(duplicates), " duplicates for ", duplicates[0].get("tolkienian_word"))
+    # TODO: implement more
 
 def remove_duplications(all_words):
     for word in all_words:
         remove_duplication_marker(word)
     for word in all_words:
-        duplicates = find_duplicates(all_words, word.get("tolkienian_word"))
+        duplicates = find_duplicates(all_words, word)
         if len(duplicates) > 1:
             make_duplicates_unique(duplicates)
 
 def format_word(word):
     tolkienian = word.get("tolkienian_word")
     stem = word.get("stem")
+    extra_info = word.get("extra_info")
     english = word.get("english_word")
     part_of_speech = word.get("part_of_speech")
 
     formatted_word = f"{tolkienian}"
     if stem is not None:
         formatted_word += f" ({stem})"
-    formatted_word += f"{DELIMITER}{english}"
+    if extra_info is not None:
+        formatted_word += f" ({extra_info})"
+    formatted_word += f"{DELIMITER}"
+    formatted_word += f"{english}"
     if part_of_speech is not None:
         formatted_word += f" ({part_of_speech})"
     formatted_word += "\n"
