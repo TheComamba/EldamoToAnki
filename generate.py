@@ -23,8 +23,8 @@ SPEECH_EXCLUDES = ["grammar", "phoneme", "phonetic-rule", "phonetic-group", "pho
 DELIMITER = "|"
 
 # TODO: If neo words is active, prefer ngloss over gloss.
-# TODO: Github Workflow to check for updates.
 # TODO: Can we update the cards instead of reimporting them?
+# TODO: Make language argument positional.
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate text files that are easily imported with Anki.')
@@ -96,11 +96,42 @@ def debug_print_word(word):
     element_string = ElementTree.tostring(word, encoding='utf-8').decode('utf-8')
     print(element_string)
 
-def find_referenced_word(reference, words):
-    for word in words:
+def find_referenced_word(referencer, all_words):
+    see_element = referencer.find('see')
+    if see_element is None:
+        return None
+    reference = see_element.get('v')
+    if reference is None:
+        return None
+    for word in all_words:
         if word.get('v') == reference:
             return word
     return None
+
+def find_translation(all_words, word):
+    english_word = word.get('gloss')
+    if english_word is None:
+        referenced_word = find_referenced_word(word, all_words)
+        if referenced_word is not None:
+            english_word = find_translation(all_words, referenced_word)
+    return english_word
+
+def format_word(all_words, word):
+    tolkienian_word = word.get('v')
+    if tolkienian_word is None:
+        print("Skipping word without value: ")
+        debug_print_word(word)
+    english_word = find_translation(all_words, word)
+    if english_word is None:
+        print("Skipping word without translation: ", tolkienian_word)
+    part_of_speech = word.get('speech')
+
+    formatted_word = f"{tolkienian_word}{DELIMITER}{english_word}"
+    if part_of_speech is not None:
+        formatted_word += f" ({part_of_speech})"
+    formatted_word += "\n"
+    
+    return formatted_word
 
 def write_to_file(args, languages, words):
     language_name = languages[0].get("name")
@@ -113,23 +144,8 @@ def write_to_file(args, languages, words):
 
     with open(filename, 'w') as f:
         for word in words:
-            tolkienian_word = word.get('v')
-            if tolkienian_word is None:
-                print("Skipping word without value: ")
-                debug_print_word(word)
-            english_word = word.get('gloss')
-            if english_word is None:
-                see_element = word.find('see')
-                if see_element is not None and see_element.get('v') is not None:
-                    referenced_word = find_referenced_word(see_element.get('v'), words)
-                    if referenced_word is not None:
-                        english_word = referenced_word.get('gloss')
-            if english_word is None:
-                print("Skipping word without translation: ", tolkienian_word)
-            part_of_speech = word.get('speech')
-            if part_of_speech is None:
-                print("Skipping word without speech: ", tolkienian_word)
-            f.write(f"{tolkienian_word}{DELIMITER}{english_word} ({part_of_speech})\n")
+            formatted_word = format_word(words, word)
+            f.write(formatted_word)
     
     print("Written output to ", filename)
 
