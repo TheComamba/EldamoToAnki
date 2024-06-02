@@ -8,11 +8,11 @@ INPUT_URL = "https://github.com/pfstrack/eldamo/raw/master/src/data/eldamo-data.
 INPUT_FILE = "input/eldamo-data.xml"
 
 KHUZDUL = { "id": "kh", "name": "Khuzdul" }
-NEO_QUENYA = { "id": "nq", "name": "Neo-Quenya"}
-NEO_SINDARIN = { "id": "ns", "name": "Neo-Sindarin"}
 QUENYA = { "id": "q", "name": "Quenya"}
+NEO_QUENYA = { "id": "nq", "name": "Neo-Quenya"}
 SINDARIN = { "id": "s", "name": "Sindarin"}
-SUPPORTED_LANGUAGES = [KHUZDUL, QUENYA, SINDARIN, NEO_QUENYA, NEO_SINDARIN]
+NEO_SINDARIN = { "id": "ns", "name": "Neo-Sindarin"}
+SUPPORTED_LANGUAGES = [KHUZDUL, QUENYA, SINDARIN]
 
 SPEECH_INDIVIDUAL_NAMES = ["fem-name", "masc-name", "place-name"]
 SPEECH_COLLECTIVE_NAMES = "collective-name"
@@ -61,7 +61,7 @@ def get_languages_to_generate(args):
     languages = []
     is_supported = False
     for language in SUPPORTED_LANGUAGES:
-        if args.language == language['id'] or args.language == language['name']:
+        if args.language.lower() == language['id'].lower() or args.language.lower() == language['name'].lower():
             is_supported = True
             languages.append(language)
             break
