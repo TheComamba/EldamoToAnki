@@ -132,6 +132,12 @@ def word_to_map(all_words, word, args):
         print("Skipping word without translation: ", word_map.get("tolkienian_word"))
         return None
     word_map["part_of_speech"] = word.get('speech')
+    word_map["stem"] = word.get('stem')
+
+    for key in word_map.keys():
+        if word_map.get(key) is not None:
+            word_map[key] = word_map[key].replace(DELIMITER, "")
+
     return word_map
 
 def words_to_maps(all_words, words, args):
@@ -142,12 +148,50 @@ def words_to_maps(all_words, words, args):
             word_maps.append(word_map)
     return word_maps
 
+def remove_duplication_marker(word):
+    word["tolkienian_word"] = word["tolkienian_word"].replace("¹", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("²", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("³", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁴", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁵", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁶", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁷", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁸", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁹", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁰", "")
+
+def find_duplicates(all_words, tolkienian_word):
+    duplicates = []
+    for word in all_words:
+        if word.get("tolkienian_word") == tolkienian_word:
+            duplicates.append(word)
+    if len(duplicates) > 1:
+        return duplicates
+    else:
+        return []
+
+def make_duplicates_unique(duplicates):
+    print("Found ", len(duplicates), " duplicates for ", duplicates[0].get("tolkienian_word"))
+    # TODO: implement
+
+def remove_duplications(all_words):
+    for word in all_words:
+        remove_duplication_marker(word)
+    for word in all_words:
+        duplicates = find_duplicates(all_words, word.get("tolkienian_word"))
+        if len(duplicates) > 1:
+            make_duplicates_unique(duplicates)
+
 def format_word(word):
     tolkienian = word.get("tolkienian_word")
+    stem = word.get("stem")
     english = word.get("english_word")
     part_of_speech = word.get("part_of_speech")
 
-    formatted_word = f"{tolkienian}{DELIMITER}{english}"
+    formatted_word = f"{tolkienian}"
+    if stem is not None:
+        formatted_word += f" ({stem})"
+    formatted_word += f"{DELIMITER}{english}"
     if part_of_speech is not None:
         formatted_word += f" ({part_of_speech})"
     formatted_word += "\n"
@@ -204,6 +248,8 @@ def main():
         print_parts_of_speech(filtered_words)
 
         word_maps = words_to_maps(filtered_words, filtered_words, args)
+
+        remove_duplications(word_maps)
 
         formatted_words = format_words(word_maps)
 
