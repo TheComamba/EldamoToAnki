@@ -229,10 +229,12 @@ def merge_tolkienian_duplicates(duplicates):
     counter = 1
     translation = ""
     for meaning in english_meanings:
-        translation += f"({counter}) {meaning}; "
+        if counter > 1:
+            translation += "; "
+        translation += f"({counter}) {meaning}"
         counter += 1
-    for i in range(1, len(duplicates)):
-        if i == 1:
+    for i in range(0, len(duplicates)):
+        if i == 0:
             duplicates[i]["english_word"] = translation
         else:
             invalidate_word(duplicates[i])
