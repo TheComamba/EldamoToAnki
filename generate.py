@@ -23,11 +23,10 @@ SPEECH_EXCLUDES = ["grammar", "phoneme", "phonetic-rule", "phonetic-group", "pho
 DELIMITER = "|"
 
 # TODO: Can we update the cards instead of reimporting them?
-# TODO: Make language argument positional.
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate text files that are easily imported with Anki.')
-    parser.add_argument('--language', type=str, required=True, help='Language to generate')
+    parser.add_argument('language', type=str, help='Language to generate')
     parser.add_argument('--neo-words', action='store_true', default=False, help='Include words invented by fans rather than Tolkien')
     parser.add_argument('--individual-names', action='store_true', default=False, help='Include names of individuals and places')
     parser.add_argument('--collective-names', action='store_true', default=False, help='Include names for collective people')

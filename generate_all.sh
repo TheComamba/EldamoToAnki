@@ -1,11 +1,11 @@
 #!/bin/bash
 
-python3 generate.py --language Khuzdul
+python3 generate.py Khuzdul
 echo
-python3 generate.py --language Quenya --neo-words
+python3 generate.py Quenya --neo-words
 echo
-python3 generate.py --language Quenya
+python3 generate.py Quenya
 echo
-python3 generate.py --language Sindarin --neo-words
+python3 generate.py Sindarin --neo-words
 echo
-python3 generate.py --language Sindarin
+python3 generate.py Sindarin
