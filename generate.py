@@ -316,9 +316,7 @@ def print_parts_of_speech(filtered_words):
     included_speech_values.sort()
     print("Collected ", len(filtered_words) ," cards of the following speech types:\n", included_speech_values)
 
-def main():
-    args = parse_args()
-
+def main(args):
     languages = get_languages_to_generate(args)
     print("Generating cards for the following languages: ", [lang.get("name") for lang in languages])
     language_ids = [lang.get("id") for lang in languages]
@@ -347,4 +345,6 @@ def main():
     else:
         raise ValueError("Could not read Eldamo data")
 
-main()
+if __name__ == "__main__":
+    args = parse_args()
+    main(args)
