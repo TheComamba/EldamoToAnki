@@ -4,6 +4,8 @@ Takes the marvellous wordlist from [eldamo.org][eldamo] and converts it into inp
 
 # Usage
 
+The decks for [Neo-Quenya][neo-quenya] and [Neo-Sindarin][neo-sindarin] based on the lists in this repository can be found on Anki (unless they get deleted because they do not receive enough downloads).
+
 Some lists can be found in the [`output`][output] folder of this repository. They are ready to be imported. They do not include any names or phrases. The lists are:
 - Adunaic (ca. 180 cards)
 - Black Speech (ca. 40 cards)
@@ -45,3 +47,5 @@ Almost all the credit here goes to [Paul Strack][pfstrack], maintainer of the [E
 [generate.py]: https://github.com/TheComamba/EldamoToAnki/blob/main/generate.py
 [generate_all.sh]: https://github.com/TheComamba/EldamoToAnki/blob/main/generate_all.sh
 [output]: https://github.com/TheComamba/EldamoToAnki/tree/main/output
+[neo-quenya]: https://ankiweb.net/shared/info/1556726257
+[neo-sindarin]: https://ankiweb.net/shared/info/1398531602?cb=1717323372536
