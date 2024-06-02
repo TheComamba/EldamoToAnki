@@ -134,13 +134,18 @@ def word_to_map(all_words, word, args):
     word_map["part_of_speech"] = word.get('speech')
     return word_map
 
-def format_word(all_words, word, args):
-    word_map = word_to_map(all_words, word, args)
-    if word_map is None:
-        return None
-    tolkienian = word_map.get("tolkienian_word")
-    english = word_map.get("english_word")
-    part_of_speech = word_map.get("part_of_speech")
+def words_to_maps(all_words, words, args):
+    word_maps = []
+    for word in words:
+        word_map = word_to_map(all_words, word, args)
+        if word_map is not None:
+            word_maps.append(word_map)
+    return word_maps
+
+def format_word(word):
+    tolkienian = word.get("tolkienian_word")
+    english = word.get("english_word")
+    part_of_speech = word.get("part_of_speech")
 
     formatted_word = f"{tolkienian}{DELIMITER}{english}"
     if part_of_speech is not None:
@@ -149,10 +154,10 @@ def format_word(all_words, word, args):
     
     return formatted_word
 
-def format_words(all_words, words, args):
+def format_words(words):
     formatted_words = []
     for word in words:
-        formatted_word = format_word(all_words, word, args)
+        formatted_word = format_word(word)
         if formatted_word is not None:
             formatted_words.append(formatted_word)
     return formatted_words
@@ -172,6 +177,12 @@ def write_to_file(args, languages, words):
     
     print("Written output to ", filename)
 
+def print_parts_of_speech(filtered_words):
+    included_speech_values = [word.get('speech') for word in filtered_words]
+    included_speech_values = list(set(included_speech_values))  # Remove duplicates
+    included_speech_values.sort()
+    print("Collected ", len(filtered_words) ," cards of the following speech types:\n", included_speech_values)
+
 def main():
     args = parse_args()
 
@@ -189,12 +200,11 @@ def main():
         speech_types_to_exclude = get_speech_types_to_exclude(args)
         filtered_words = [word for word in filtered_words if word.get('speech') not in speech_types_to_exclude]
         
-        included_speech_values = [word.get('speech') for word in filtered_words]
-        included_speech_values = list(set(included_speech_values))  # Remove duplicates
-        included_speech_values.sort()
-        print("Collected ", len(filtered_words) ," cards of the following speech types:\n", included_speech_values)
+        print_parts_of_speech(filtered_words)
 
-        formatted_words = format_words(words, filtered_words, args)
+        word_maps = words_to_maps(filtered_words, filtered_words, args)
+
+        formatted_words = format_words(word_maps)
 
         write_to_file(args, languages, formatted_words)
     else:
