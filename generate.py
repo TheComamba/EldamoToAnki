@@ -222,6 +222,25 @@ def add_uniqueness_via_field(duplicates, field):
                 word["extra_info"] += ", "
             word["extra_info"] += word.get(field)
 
+def invalidate_word(word):
+    word["tolkienian_word"] = None
+    word["english_word"] = None
+
+def merge_tolkienian_duplicates(duplicates):
+    # TODO: This is currently buggy.
+    english_meanings = [word.get("english_word") for word in duplicates if word.get("english_word") is not None]
+    english_meanings.sort()
+    counter = 1
+    translation = ""
+    for meaning in english_meanings:
+        translation += f"({counter}) {meaning}; "
+        counter += 1
+    for i in range(1, len(duplicates)):
+        if i == 1:
+            duplicates[i]["english_word"] = translation
+        else:
+            invalidate_word(duplicates[i])
+
 def make_tolkienian_duplicates_unique(duplicates):
     add_uniqueness_via_field(duplicates, "part_of_speech")
     duplicates = find_tolkienian_duplicates(duplicates, duplicates[0])
@@ -229,13 +248,14 @@ def make_tolkienian_duplicates_unique(duplicates):
     duplicates = find_tolkienian_duplicates(duplicates, duplicates[0])
 
     if len(duplicates) > 1:
-        print("Found ", len(duplicates), " duplicates for ", duplicates[0].get("tolkienian_word"))
-    # TODO: implement more
+        merge_tolkienian_duplicates(duplicates)
 
 def remove_duplications(all_words):
     for word in all_words:
         remove_duplication_marker(word)
     for word in all_words:
+        if word.get("tolkienian_word") is None:
+            continue
         tolkienian_duplicates = find_tolkienian_duplicates(all_words, word)
         if len(tolkienian_duplicates) > 1:
             make_tolkienian_duplicates_unique(tolkienian_duplicates)
@@ -243,6 +263,8 @@ def remove_duplications(all_words):
         #if len(english_duplicates) > 1:
             # print("Found ", len(english_duplicates), " duplicates for ", english_duplicates[0].get("english_word"))
             # TODO: implement more
+    all_words = [word for word in all_words if word.get("tolkienian_word") is not None]
+    return all_words
 
 def format_word(word):
     tolkienian = word.get("tolkienian_word")
@@ -317,7 +339,7 @@ def main():
 
         word_maps = words_to_maps(filtered_words, filtered_words, categories, args)
 
-        remove_duplications(word_maps)
+        word_maps = remove_duplications(word_maps)
 
         formatted_words = format_words(word_maps)
 
