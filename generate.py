@@ -7,12 +7,16 @@ import xml.etree.ElementTree as ElementTree
 INPUT_URL = "https://github.com/pfstrack/eldamo/raw/master/src/data/eldamo-data.xml"
 INPUT_FILE = "input/eldamo-data.xml"
 
+ADUNAIC = { "id": "ad", "name": "Adunaic" }
+BLACK_SPEECH = { "id": "bs", "name": "Black-Speech" }
 KHUZDUL = { "id": "kh", "name": "Khuzdul" }
+NOLDORIN = { "id": "n", "name": "Noldorin" }
 QUENYA = { "id": "q", "name": "Quenya"}
 NEO_QUENYA = { "id": "nq", "name": "Neo-Quenya"}
 SINDARIN = { "id": "s", "name": "Sindarin"}
 NEO_SINDARIN = { "id": "ns", "name": "Neo-Sindarin"}
-SUPPORTED_LANGUAGES = [KHUZDUL, QUENYA, SINDARIN]
+TELERIN = { "id": "t", "name": "Telerin"}
+SUPPORTED_LANGUAGES = [ADUNAIC, BLACK_SPEECH, KHUZDUL, NOLDORIN, QUENYA, SINDARIN, TELERIN]
 
 SPEECH_INDIVIDUAL_NAMES = ["fem-name", "masc-name", "place-name"]
 SPEECH_COLLECTIVE_NAMES = "collective-name"

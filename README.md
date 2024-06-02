@@ -4,12 +4,16 @@ Takes the marvellous wordlist from [eldamo.org][eldamo] and converts it into inp
 
 # Usage
 
-Some lists can be found in the [`output`](https://github.com/TheComamba/EldamoToAnki/tree/main/output) folder of this repository. They are ready to be imported. They do not include any names or phrases. The lists are:
-- Khuzdul (The number of words is tiny, this is primarily for testing.)
-- Quenya
-- Quenya plus Neo-Quenya
-- Sindarin
-- Sindarin plus Neo-Sindarin
+Some lists can be found in the [`output`][output] folder of this repository. They are ready to be imported. They do not include any names or phrases. The lists are:
+- Adunaic (ca. 200 words)
+- Black Speech (ca. 40 words)
+- Khuzdul (ca. 40 words)
+- Noldorin (ca. 1400 words)
+- Quenya (ca. 2600 words)
+- Quenya plus Neo-Quenya (ca. 5300 words)
+- Sindarin (ca. 1400 words)
+- Sindarin plus Neo-Sindarin (ca. 2900 words)
+- Telerin (ca. 200 words)
 
 Thanks to the very structured [input data][eldamo-data] curated by [Paul Strack][pfstrack], it is extremely easy to add more languages to that list. Just drop me an issue and I'll do that for you.
 
@@ -40,3 +44,4 @@ Almost all the credit here goes to [Paul Strack][pfstrack], maintainer of the [E
 [pfstrack]: https://github.com/pfstrack
 [generate.py]: https://github.com/TheComamba/EldamoToAnki/blob/main/generate.py
 [generate_all.sh]: https://github.com/TheComamba/EldamoToAnki/blob/main/generate_all.sh
+[output]: https://github.com/TheComamba/EldamoToAnki/tree/main/output
