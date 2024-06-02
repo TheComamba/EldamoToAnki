@@ -26,6 +26,7 @@ SPEECH_PHRASES = "phrase"
 SPEECH_EXCLUDES = ["grammar", "phoneme", "phonetic-rule", "phonetic-group", "phonetics", "root", "text", "?"]
 
 DELIMITER = "|"
+UNGLOSSED = "[unglossed]"
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate text files that are easily imported with Anki.')
@@ -113,8 +114,12 @@ def find_translation(all_words, word, args):
     english_word = None
     if args.neo_words:
         english_word = word.get('ngloss')
+    if english_word == UNGLOSSED:
+        english_word = None
     if english_word is None:
         english_word = word.get('gloss')
+    if english_word == UNGLOSSED:
+        english_word = None
     if english_word is None:
         referenced_word = find_referenced_word(word, all_words)
         if referenced_word is not None:
