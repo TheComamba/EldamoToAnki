@@ -1,6 +1,7 @@
 import argparse
 import copy
 import os
+import re
 import requests
 import xml.etree.ElementTree as ElementTree
 
@@ -222,16 +223,39 @@ def invalidate_word(word):
     word["tolkienian_word"] = None
     word["english_word"] = None
 
+def is_contained_in_variants(word, variant):
+    is_variant = "(" in variant and ")" in variant
+    if not is_variant:
+        return False
+    longer_variant = variant.replace("(", "").replace(")", "")
+    shorter_variant = re.sub(r'\(.*?\)', '', variant)
+    return word == longer_variant or word == shorter_variant
+
+def remove_duplicate_translations(words):
+    deduped = words.copy()
+    for word in words:
+        for variant in words:
+            if is_contained_in_variants(word, variant):
+                deduped.remove(word)
+    return deduped
+
 def merge_duplicates(duplicates, field_to_merge):
     values_to_merge = [word.get(field_to_merge) for word in duplicates if word.get(field_to_merge) is not None]
+    values_to_merge = remove_duplicate_translations(values_to_merge)
     values_to_merge.sort()
-    counter = 1
+
     merged_values = ""
-    for meaning in values_to_merge:
-        if counter > 1:
-            merged_values += "; "
-        merged_values += f"({counter}) {meaning}"
-        counter += 1
+    
+    if len(values_to_merge) == 1:
+        merged_values = values_to_merge[0]
+    else:
+        counter = 1
+        for value in values_to_merge:
+            if counter > 1:
+                merged_values += "; "
+            merged_values += f"({counter}) {value}"
+            counter += 1
+    
     for i in range(0, len(duplicates)):
         if i == 0:
             duplicates[i][field_to_merge] = merged_values

@@ -93,6 +93,28 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(words[0]["english_word"], "(1) as; (2) knowing; (3) peace")
         self.assertIsNone(words[1]["english_word"])
         self.assertIsNone(words[2]["english_word"])
+    
+    def test_merging_duplicates_with_provided_alternatives(self):
+        words = [
+            {"tolkienian_word": "(a)lá", "english_word": "yes"},
+            {"tolkienian_word": "lá", "english_word": "yes"},
+            {"tolkienian_word": "alá", "english_word": "yes"},
+        ]
+        merge_duplicates(words, "tolkienian_word")
+        self.assertEqual(words[0]["tolkienian_word"], "(a)lá")
+        self.assertIsNone(words[1]["tolkienian_word"])
+
+    def test_merging_duplicates_with_some_provided_alternatives(self):
+        words = [
+            {"tolkienian_word": "(a)lá", "english_word": "yes"},
+            {"tolkienian_word": "lá", "english_word": "yes"},
+            {"tolkienian_word": "alá", "english_word": "yes"},
+            {"tolkienian_word": "test", "english_word": "yes"},
+        ]
+        merge_duplicates(words, "tolkienian_word")
+        self.assertEqual(words[0]["tolkienian_word"], "(1) (a)lá; (2) test")
+        self.assertIsNone(words[1]["tolkienian_word"])
+        self.assertIsNone(words[2]["tolkienian_word"])
 
     def test_formatting_simple_word(self):
         word = {"tolkienian_word": "hîr", "english_word": "lord"}
