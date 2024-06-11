@@ -242,6 +242,7 @@ def remove_duplicate_translations(words):
         for variant in words:
             if is_contained_in_variants(word, variant):
                 deduped.remove(word)
+    deduped = list(set(deduped))
     return deduped
 
 def merge_duplicates(duplicates, field_to_merge):

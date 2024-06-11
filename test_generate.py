@@ -93,6 +93,15 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(words[0]["english_word"], "(1) as; (2) knowing; (3) peace")
         self.assertIsNone(words[1]["english_word"])
         self.assertIsNone(words[2]["english_word"])
+
+    def test_merging_tolkienian_true_duplicates(self):
+        words = [
+            {"tolkienian_word": "cenya", "english_word": "*seeing"},
+            {"tolkienian_word": "cenya", "english_word": "*seeing"},
+        ]
+        merge_duplicates(words, "english_word")
+        self.assertEqual(words[0]["english_word"], "*seeing")
+        self.assertIsNone(words[1]["english_word"])
     
     def test_merging_duplicates_with_provided_alternatives(self):
         words = [
