@@ -215,9 +215,20 @@ def is_field_same_for_all(duplicates, field):
             return False
     return True
 
+def field_exists_for_all_true_duplicates(duplicates, field, word_to_compare_to):
+    for word in duplicates:
+        if word["english_word"] != word_to_compare_to["english_word"]:
+            continue
+        if word["tolkienian_word"] != word_to_compare_to["tolkienian_word"]:
+            continue
+        if word.get(field) is None:
+            return False
+    return True
+
 def add_uniqueness_via_field(duplicates, field):
     for word in duplicates:
-        if not is_field_same_for_all(duplicates, field) and word.get(field) is not None:
+        field_breaks_duplication = not is_field_same_for_all(duplicates, field)
+        if field_breaks_duplication and field_exists_for_all_true_duplicates(duplicates, field, word):
             if word.get("extra_info") is None:
                 word["extra_info"] = ""
             else:
