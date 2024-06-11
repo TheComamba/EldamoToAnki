@@ -1,5 +1,5 @@
 import unittest
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, merge_duplicates, parse_args, main
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, main
 
 class TestGenerate(unittest.TestCase):
     def test_words_are_tolkienian_duplicates(self):
@@ -93,6 +93,15 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(words[0]["english_word"], "(1) as; (2) knowing; (3) peace")
         self.assertIsNone(words[1]["english_word"])
         self.assertIsNone(words[2]["english_word"])
+
+    def test_merging_tolkienian_true_duplicates(self):
+        words = [
+            {"tolkienian_word": "cenya", "english_word": "*seeing"},
+            {"tolkienian_word": "cenya", "english_word": "*seeing"},
+        ]
+        merge_duplicates(words, "english_word")
+        self.assertEqual(words[0]["english_word"], "*seeing")
+        self.assertIsNone(words[1]["english_word"])
     
     def test_merging_duplicates_with_provided_alternatives(self):
         words = [
@@ -115,6 +124,24 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(words[0]["tolkienian_word"], "(1) (a)lá; (2) test")
         self.assertIsNone(words[1]["tolkienian_word"])
         self.assertIsNone(words[2]["tolkienian_word"])
+
+    def test_make_tolkienian_duplicates_unique_does_add_extra_info_for_duplicates(self):
+        words = [
+            {"tolkienian_word": "gaer", "english_word": "awful", "category": "Emotion"},
+            {"tolkienian_word": "gaer", "english_word": "red"},
+        ]
+        make_tolkienian_duplicates_unique(words)
+        self.assertEqual(words[0]["extra_info"], "Emotion")
+        self.assertNotIn("extra_info", words[1])
+
+    def test_make_tolkienian_duplicates_unique_does_not_add_extra_info_for_true_duplicates(self):
+        words = [
+            {"tolkienian_word": "cenya", "english_word": "*seeing", "category": "Sense Perception"},
+            {"tolkienian_word": "cenya", "english_word": "*seeing"},
+        ]
+        make_tolkienian_duplicates_unique(words)
+        self.assertNotIn("extra_info", words[0])
+        self.assertNotIn("extra_info", words[1])
 
     def test_formatting_simple_word(self):
         word = {"tolkienian_word": "hîr", "english_word": "lord"}
