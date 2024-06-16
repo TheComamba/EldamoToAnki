@@ -1,5 +1,5 @@
 import unittest
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, main
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, remove_duplicate_translations, main
 
 class TestGenerate(unittest.TestCase):
     def test_words_are_tolkienian_duplicates(self):
@@ -83,6 +83,21 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(words[1]["extra_info"], "test")
         self.assertEqual(words[2]["extra_info"], "noodle")
     
+    def test_remove_duplicate_translations_with_asterisk(self):
+        words = ["bla", "*bla"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["bla"])
+
+    def test_remove_duplicate_translations_with_question_mark(self):
+        words = ["bla", "?bla"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["bla"])
+
+    def test_remove_duplicate_translations_with_warning_sign(self):
+        words = ["bla", "⚠️bla"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["bla"])
+
     def test_merging_tolkienian_duplicates(self):
         words = [
             {"tolkienian_word": "sívë", "english_word": "knowing"},
