@@ -240,12 +240,18 @@ def invalidate_word(word):
     word["english_word"] = None
 
 def is_contained_in_variants(word, variant):
+    if word == variant:
+        return False
+    MARKERS = ["*", "?", "⚠️"]
+    MARKER_PATTERN = "[\*\?⚠️]"
     is_variant = "(" in variant and ")" in variant
-    if not is_variant:
+    has_marker = any(marker in word for marker in MARKERS)
+    if not is_variant and not has_marker:
         return False
     longer_variant = variant.replace("(", "").replace(")", "")
     shorter_variant = re.sub(r'\(.*?\)', '', variant)
-    return word == longer_variant or word == shorter_variant
+    word_without_markers = re.sub(MARKER_PATTERN, '', word)
+    return word_without_markers == longer_variant or word_without_markers == shorter_variant
 
 def remove_duplicate_translations(words):
     deduped = words.copy()
