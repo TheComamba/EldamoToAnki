@@ -134,6 +134,8 @@ def get_category(word, categories):
                 return cat.get("label")
     return None
 
+def include_tengwar_info(word):
+
 def word_to_map(all_words, word, categories, args):
     word_map = {}
     word_map["tolkienian_word"] = word.get('v')

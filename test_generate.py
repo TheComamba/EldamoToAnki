@@ -1,7 +1,39 @@
 import unittest
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, remove_duplicate_translations, main
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, remove_duplicate_translations, main
 
 class TestGenerate(unittest.TestCase):
+    def test_include_tengwar_info(self):
+        word = {"v": "mísë", "tengwar": "þ"}
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "mísë [þ]")
+
+    def test_include_implicit_tengwar_info_for_thule(self):
+        word = {"l": "q", "v": "míþë"}
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "mísë [þ]")
+    
+    def test_include_implicit_tengwar_info_for_w(self):
+        word = {"l": "q", "v": "wilya"} # Replaced at beginning of word
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "vilya [w]")
+
+        word = {"l": "q", "v": "awalda"} # Replaced after vowel
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "avalda [w]")
+
+        word = {"l": "q", "v": "aiwendil"} # Not replaced after diphthong
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "aiwendil")
+
+        word = {"l": "q", "v": "inwe"} # Not replaced after consonant
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "inwe")
+
+    def test_include_implicit_tengwar_info_for_initial_ng(self):
+        word = {"l": "q", "v": "ñauna-"}
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "nauna- [ñ-]")
+
     def test_words_are_tolkienian_duplicates(self):
         word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
 
@@ -142,47 +174,43 @@ class TestGenerate(unittest.TestCase):
 
     def test_merging_english_duplicates_with_tengwar_variant_thule(self):
         words = [
-            {"tolkienian_word": "asa-", "english_word": "to agree", "tengwar": "þ"},
+            {"tolkienian_word": "asa- [þ]", "english_word": "to agree"},
             {"tolkienian_word": "aþa-", "english_word": "to agree"},
+            {"tolkienian_word": "made-up-word", "english_word": "to agree"},
         ]
         merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) asa-; (2) aþa-")
-        self.assertIsNone(words[0]["tengwar"])
+        self.assertEqual(words[0]["english_word"], "(1) asa- [þ]; (2) made-up-word")
         self.assertIsNone(words[1]["english_word"])
-        self.assertIsNone(words[1]["tengwar"])
 
     def test_merging_english_duplicates_with_tengwar_variant_thule_reversed_order(self):
         words = [
+            {"tolkienian_word": "made-up-word", "english_word": "to agree"},
             {"tolkienian_word": "aþa-", "english_word": "to agree"},
-            {"tolkienian_word": "asa-", "english_word": "to agree", "tengwar": "þ"},
+            {"tolkienian_word": "asa- [þ]", "english_word": "to agree"},
         ]
         merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) asa-; (2) aþa-")
-        self.assertIsNone(words[0]["tengwar"])
+        self.assertEqual(words[0]["english_word"], "(1) asa- [þ]; (2) made-up-word")
         self.assertIsNone(words[1]["english_word"])
-        self.assertIsNone(words[1]["tengwar"])
 
     def test_merging_english_duplicates_with_tengwar_variant_w(self):
         words = [
-            {"tolkienian_word": "avalda-", "english_word": "moved", "tengwar": "w"},
+            {"tolkienian_word": "avalda- [w]", "english_word": "moved"},
             {"tolkienian_word": "awalda-", "english_word": "moved"},
+            {"tolkienian_word": "made-up-word", "english_word": "moved"},
         ]
         merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) avalda-; (2) awalda-")
-        self.assertIsNone(words[0]["tengwar"])
+        self.assertEqual(words[0]["english_word"], "(1) avalda- [w]; (2) made-up-word")
         self.assertIsNone(words[1]["english_word"])
-        self.assertIsNone(words[1]["tengwar"])
 
-    def test_merging_english_duplicates_with_tengwar_variant_w_reversed_order(self):
+    def test_merging_english_duplicates_with_tengwar_variant_ng(self):
         words = [
-            {"tolkienian_word": "awalda-", "english_word": "moved"},
-            {"tolkienian_word": "avalda-", "english_word": "moved", "tengwar": "w"},
+            {"tolkienian_word": "nauna- [ñ-]", "english_word": "to howl"},
+            {"tolkienian_word": "ñauna-", "english_word": "to howl"},
+            {"tolkienian_word": "made-up-word", "english_word": "to howl"},
         ]
         merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) avalda-; (2) awalda-")
-        self.assertIsNone(words[0]["tengwar"])
+        self.assertEqual(words[0]["english_word"], "(1) made-up-word; (2) nauna- [ñ-]")
         self.assertIsNone(words[1]["english_word"])
-        self.assertIsNone(words[1]["tengwar"])
 
     def test_make_tolkienian_duplicates_unique_does_add_extra_info_for_duplicates(self):
         words = [
