@@ -140,6 +140,50 @@ class TestGenerate(unittest.TestCase):
         self.assertIsNone(words[1]["tolkienian_word"])
         self.assertIsNone(words[2]["tolkienian_word"])
 
+    def test_merging_english_duplicates_with_tengwar_variant_thule(self):
+        words = [
+            {"tolkienian_word": "asa-", "english_word": "to agree", "tengwar": "þ"},
+            {"tolkienian_word": "aþa-", "english_word": "to agree"},
+        ]
+        merge_duplicates(words, "english_word")
+        self.assertEqual(words[0]["english_word"], "(1) asa-; (2) aþa-")
+        self.assertIsNone(words[0]["tengwar"])
+        self.assertIsNone(words[1]["english_word"])
+        self.assertIsNone(words[1]["tengwar"])
+
+    def test_merging_english_duplicates_with_tengwar_variant_thule_reversed_order(self):
+        words = [
+            {"tolkienian_word": "aþa-", "english_word": "to agree"},
+            {"tolkienian_word": "asa-", "english_word": "to agree", "tengwar": "þ"},
+        ]
+        merge_duplicates(words, "english_word")
+        self.assertEqual(words[0]["english_word"], "(1) asa-; (2) aþa-")
+        self.assertIsNone(words[0]["tengwar"])
+        self.assertIsNone(words[1]["english_word"])
+        self.assertIsNone(words[1]["tengwar"])
+
+    def test_merging_english_duplicates_with_tengwar_variant_w(self):
+        words = [
+            {"tolkienian_word": "avalda-", "english_word": "moved", "tengwar": "w"},
+            {"tolkienian_word": "awalda-", "english_word": "moved"},
+        ]
+        merge_duplicates(words, "english_word")
+        self.assertEqual(words[0]["english_word"], "(1) avalda-; (2) awalda-")
+        self.assertIsNone(words[0]["tengwar"])
+        self.assertIsNone(words[1]["english_word"])
+        self.assertIsNone(words[1]["tengwar"])
+
+    def test_merging_english_duplicates_with_tengwar_variant_w_reversed_order(self):
+        words = [
+            {"tolkienian_word": "awalda-", "english_word": "moved"},
+            {"tolkienian_word": "avalda-", "english_word": "moved", "tengwar": "w"},
+        ]
+        merge_duplicates(words, "english_word")
+        self.assertEqual(words[0]["english_word"], "(1) avalda-; (2) awalda-")
+        self.assertIsNone(words[0]["tengwar"])
+        self.assertIsNone(words[1]["english_word"])
+        self.assertIsNone(words[1]["tengwar"])
+
     def test_make_tolkienian_duplicates_unique_does_add_extra_info_for_duplicates(self):
         words = [
             {"tolkienian_word": "gaer", "english_word": "awful", "category": "Emotion"},
