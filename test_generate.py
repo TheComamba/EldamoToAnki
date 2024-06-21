@@ -178,10 +178,15 @@ class TestGenerate(unittest.TestCase):
         formatted = format_word(word)
         self.assertEqual(formatted, "hîr|lord (n)\n")
 
-    def test_formatting_word_with_all(self):
-        word = {"tolkienian_word": "hîr", "english_word": "lord", "stem": "hîr", "extra_info": "extra", "part_of_speech": "n"}
+    def test_formatting_word_with_tengwar_info(self):
+        word = {"tolkienian_word": "mísë", "english_word": "grey", "tengwar": "þ"}
         formatted = format_word(word)
-        self.assertEqual(formatted, "hîr (hîr) (extra)|lord (n)\n")
+        self.assertEqual(formatted, "mísë [þ]|grey\n")
+
+    def test_formatting_word_with_all(self):
+        word = {"tolkienian_word": "mísë", "english_word": "grey", "stem": "*mísi-", "extra_info": "extra", "part_of_speech": "adj", "tengwar": "þ"}
+        formatted = format_word(word)
+        self.assertEqual(formatted, "mísë [þ] (*mísi-) (extra)|grey (adj)\n")
 
     def test_generating_sindarin_does_not_throw(self):
         args = parse_args()
