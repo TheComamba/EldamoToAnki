@@ -148,6 +148,7 @@ def word_to_map(all_words, word, categories, args):
     word_map["part_of_speech"] = word.get('speech')
     word_map["stem"] = word.get('stem')
     word_map["category"] = get_category(word, categories)
+    word_map["tengwar"] = word.get('tengwar')
 
     for key in word_map.keys():
         if word_map.get(key) is not None:
@@ -311,12 +312,15 @@ def remove_duplications(all_words):
 
 def format_word(word):
     tolkienian = word.get("tolkienian_word")
+    tengwar = word.get("tengwar")
     stem = word.get("stem")
     extra_info = word.get("extra_info")
     english = word.get("english_word")
     part_of_speech = word.get("part_of_speech")
 
     formatted_word = f"{tolkienian}"
+    if tengwar is not None:
+        formatted_word += f" [{tengwar}]"
     if stem is not None:
         formatted_word += f" ({stem})"
     if extra_info is not None:
