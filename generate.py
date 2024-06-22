@@ -382,7 +382,7 @@ def format_words(words):
 def write_to_file(args, languages, words):
     language_name = languages[0].get("name")
     if args.neo_words:
-        language_name = "(Neo-)" + language_name
+        language_name = "Neo-" + language_name
     output_dir = "output"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
