@@ -1,7 +1,71 @@
 import unittest
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, remove_duplicate_translations, main
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, remove_duplicate_translations, main
 
 class TestGenerate(unittest.TestCase):
+    def test_include_tengwar_info(self):
+        word = {"tolkienian_word": "mísë", "tengwar": "þ"}
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "mísë [þ]")
+
+    def test_include_tengwar_info_for_any_language(self):
+        word = {"language": "s", "tolkienian_word": "gaur", "tengwar": "ng-"}
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "gaur [ng-]")
+    
+    def test_do_not_include_tengwar_info_for_quenya_w(self):
+        word = {"language": "q", "tolkienian_word": "vingë", "tengwar": "w"}
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "vingë")
+
+    def test_include_implicit_tengwar_info_for_thule(self):
+        word = {"language": "q", "tolkienian_word": "míþë"}
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "mísë [þ]")
+    
+    def test_include_implicit_tengwar_info_for_w(self):
+        word = {"language": "q", "tolkienian_word": "wilya"} # Replaced at beginning of word
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "vilya") # No mention of the original spelling
+
+        word = {"language": "q", "tolkienian_word": "Wilya"} # Also works for capital letter
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "Vilya")
+
+        word = {"language": "q", "tolkienian_word": "awalda"} # Replaced after vowel
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "avalda")
+
+        word = {"language": "q", "tolkienian_word": "aiwendil"} # Not replaced after ai
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "aiwendil")
+
+        word = {"language": "q", "tolkienian_word": "oiwa"} # Not replaced after oi
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "oiwa")
+
+        word = {"language": "q", "tolkienian_word": "inwe"} # Not replaced after consonant
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "inwe")
+
+    def test_include_implicit_tengwar_info_for_initial_ng(self):
+        word = {"language": "q", "tolkienian_word": "ñauna-"}
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "nauna- [ñ-]")
+
+        word = {"language": "q", "tolkienian_word": "Ñoldo"}
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "Noldo [ñ-]")
+
+    def test_include_implicit_tengwar_info_operates_on_neo_quenya(self):
+        word = {"language": "nq", "tolkienian_word": "míþë"}
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "mísë [þ]")
+
+    def test_include_implicit_tengwar_info_only_operates_on_quenya(self):
+        word = {"language": "t", "tolkienian_word": "þarma"}
+        include_tengwar_info(word)
+        self.assertEqual(word["tolkienian_word"], "þarma")
+
     def test_words_are_tolkienian_duplicates(self):
         word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
 
@@ -179,9 +243,9 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(formatted, "hîr|lord (n)\n")
 
     def test_formatting_word_with_all(self):
-        word = {"tolkienian_word": "hîr", "english_word": "lord", "stem": "hîr", "extra_info": "extra", "part_of_speech": "n"}
+        word = {"tolkienian_word": "mísë", "english_word": "grey", "stem": "*mísi-", "extra_info": "extra", "part_of_speech": "adj"}
         formatted = format_word(word)
-        self.assertEqual(formatted, "hîr (hîr) (extra)|lord (n)\n")
+        self.assertEqual(formatted, "mísë (*mísi-) (extra)|grey (adj)\n")
 
     def test_generating_sindarin_does_not_throw(self):
         args = parse_args()

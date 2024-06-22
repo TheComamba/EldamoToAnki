@@ -134,6 +134,43 @@ def get_category(word, categories):
                 return cat.get("label")
     return None
 
+def is_quenya(word):
+    return word.get('language') == QUENYA.get('id') or word.get('language') == NEO_QUENYA.get('id')
+
+def include_tengwar_info_for_quenya(word):
+    if "þ" in word["tolkienian_word"]:
+        word["tolkienian_word"] = word["tolkienian_word"].replace("þ", "s")
+        word["tengwar"] = "þ"
+    if word["tolkienian_word"].startswith("ñ"):
+        word["tolkienian_word"] = "n" + word["tolkienian_word"][1:]
+        word["tengwar"] = "ñ-"
+    if word["tolkienian_word"].startswith("Ñ"):
+        word["tolkienian_word"] = "N" + word["tolkienian_word"][1:]
+        word["tengwar"] = "ñ-"
+    if word["tolkienian_word"].startswith("w"):
+        word["tolkienian_word"] = "v" + word["tolkienian_word"][1:]
+    if word["tolkienian_word"].startswith("W"):
+        word["tolkienian_word"] = "V" + word["tolkienian_word"][1:]
+    w_pattern = r'(?<=[aeiou])(?<!ai)(?<!oi)w'
+    if re.search(w_pattern, word["tolkienian_word"]):
+        word["tolkienian_word"] = re.sub(w_pattern, 'v', word["tolkienian_word"])
+    
+    tengwar_info = word.get("tengwar")
+    if tengwar_info is not None and tengwar_info != "w":
+        word["tolkienian_word"] += f" [{tengwar_info}]"
+        del word["tengwar"]
+        return
+       
+
+def include_tengwar_info(word):
+    if is_quenya(word):
+        include_tengwar_info_for_quenya(word)
+    else:
+        tengwar_info = word.get("tengwar")
+        if tengwar_info is not None:
+            word["tolkienian_word"] += f" [{tengwar_info}]"
+            del word["tengwar"]
+
 def word_to_map(all_words, word, categories, args):
     word_map = {}
     word_map["tolkienian_word"] = word.get('v')
@@ -148,10 +185,14 @@ def word_to_map(all_words, word, categories, args):
     word_map["part_of_speech"] = word.get('speech')
     word_map["stem"] = word.get('stem')
     word_map["category"] = get_category(word, categories)
+    word_map["tengwar"] = word.get('tengwar')
+    word_map["language"] = word.get('l')
 
     for key in word_map.keys():
         if word_map.get(key) is not None:
             word_map[key] = word_map[key].replace(DELIMITER, "")
+
+    include_tengwar_info(word_map)
 
     return word_map
 
