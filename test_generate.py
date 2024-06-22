@@ -204,46 +204,6 @@ class TestGenerate(unittest.TestCase):
         self.assertIsNone(words[1]["tolkienian_word"])
         self.assertIsNone(words[2]["tolkienian_word"])
 
-    def test_merging_english_duplicates_with_tengwar_variant_thule(self):
-        words = [
-            {"tolkienian_word": "asa- [þ]", "english_word": "to agree"},
-            {"tolkienian_word": "aþa-", "english_word": "to agree"},
-            {"tolkienian_word": "made-up-word", "english_word": "to agree"},
-        ]
-        merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) asa- [þ]; (2) made-up-word")
-        self.assertIsNone(words[1]["english_word"])
-
-    def test_merging_english_duplicates_with_tengwar_variant_thule_reversed_order(self):
-        words = [
-            {"tolkienian_word": "made-up-word", "english_word": "to agree"},
-            {"tolkienian_word": "aþa-", "english_word": "to agree"},
-            {"tolkienian_word": "asa- [þ]", "english_word": "to agree"},
-        ]
-        merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) asa- [þ]; (2) made-up-word")
-        self.assertIsNone(words[1]["english_word"])
-
-    def test_merging_english_duplicates_with_tengwar_variant_w(self):
-        words = [
-            {"tolkienian_word": "avalda- [w]", "english_word": "moved"},
-            {"tolkienian_word": "awalda-", "english_word": "moved"},
-            {"tolkienian_word": "made-up-word", "english_word": "moved"},
-        ]
-        merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) avalda- [w]; (2) made-up-word")
-        self.assertIsNone(words[1]["english_word"])
-
-    def test_merging_english_duplicates_with_tengwar_variant_ng(self):
-        words = [
-            {"tolkienian_word": "nauna- [ñ-]", "english_word": "to howl"},
-            {"tolkienian_word": "ñauna-", "english_word": "to howl"},
-            {"tolkienian_word": "made-up-word", "english_word": "to howl"},
-        ]
-        merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) made-up-word; (2) nauna- [ñ-]")
-        self.assertIsNone(words[1]["english_word"])
-
     def test_make_tolkienian_duplicates_unique_does_add_extra_info_for_duplicates(self):
         words = [
             {"tolkienian_word": "gaer", "english_word": "awful", "category": "Emotion"},
@@ -282,15 +242,10 @@ class TestGenerate(unittest.TestCase):
         formatted = format_word(word)
         self.assertEqual(formatted, "hîr|lord (n)\n")
 
-    def test_formatting_word_with_tengwar_info(self):
-        word = {"tolkienian_word": "mísë", "english_word": "grey", "tengwar": "þ"}
-        formatted = format_word(word)
-        self.assertEqual(formatted, "mísë [þ]|grey\n")
-
     def test_formatting_word_with_all(self):
-        word = {"tolkienian_word": "mísë", "english_word": "grey", "stem": "*mísi-", "extra_info": "extra", "part_of_speech": "adj", "tengwar": "þ"}
+        word = {"tolkienian_word": "mísë", "english_word": "grey", "stem": "*mísi-", "extra_info": "extra", "part_of_speech": "adj"}
         formatted = format_word(word)
-        self.assertEqual(formatted, "mísë [þ] (*mísi-) (extra)|grey (adj)\n")
+        self.assertEqual(formatted, "mísë (*mísi-) (extra)|grey (adj)\n")
 
     def test_generating_sindarin_does_not_throw(self):
         args = parse_args()

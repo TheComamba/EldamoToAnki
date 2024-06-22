@@ -142,9 +142,18 @@ def include_tengwar_info_for_quenya(word):
         word["tolkienian_word"] = word["tolkienian_word"].replace("þ", "s")
         word["tengwar"] = "þ"
     if word["tolkienian_word"].startswith("ñ"):
-        word["tolkienian_word"] = word["tolkienian_word"].replace("ñ", "n")
+        word["tolkienian_word"] = "n" + word["tolkienian_word"][1:]
         word["tengwar"] = "ñ-"
-    # TODO: Handle various w cases.
+    if word["tolkienian_word"].startswith("Ñ"):
+        word["tolkienian_word"] = "N" + word["tolkienian_word"][1:]
+        word["tengwar"] = "ñ-"
+    if word["tolkienian_word"].startswith("w"):
+        word["tolkienian_word"] = "v" + word["tolkienian_word"][1:]
+    if word["tolkienian_word"].startswith("W"):
+        word["tolkienian_word"] = "V" + word["tolkienian_word"][1:]
+    w_pattern = r'(?<=[aeiou])(?<!ai)(?<!oi)w'
+    if re.search(w_pattern, word["tolkienian_word"]):
+        word["tolkienian_word"] = re.sub(w_pattern, 'v', word["tolkienian_word"])
     
     tengwar_info = word.get("tengwar")
     if tengwar_info is not None and tengwar_info != "w":
