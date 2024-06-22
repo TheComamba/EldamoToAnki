@@ -58,6 +58,7 @@ for i, (guid, front, back) in enumerate(old_data):
         deleted_cards.append((guid, front, back))
 
 if len(deleted_cards) > 0:
+    print()
     print("The following outdated cards need to be deleted manually:")
 for guid, front, back in deleted_cards:
     print(guid, "|", front, "|", back)
@@ -76,6 +77,7 @@ for new_front, new_back in new_data:
         new_cards.append((new_front, new_back))
 
 if len(new_cards) > 0:
+    print()
     print("The following cards need to be added manually:")
 for front, back in new_cards:
     print("|", front, "|", back)
