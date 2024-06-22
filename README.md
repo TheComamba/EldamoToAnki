@@ -81,7 +81,7 @@ Several words are provided with additional information on the spelling in Tengwa
 
 > isilmë [þ]|moonlight (n)
 >
-> venwa [w]|lime (fruit) (n)
+> nairë [ñ-]|space (as a physical dimension) (n)
 
 ## Special Tengwar Treatment for Quenya
 
