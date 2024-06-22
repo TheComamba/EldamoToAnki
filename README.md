@@ -37,6 +37,78 @@ You can add optional arguments:
 
 You can check out the [`generate_all.sh`][generate_all.sh] script for example usages.
 
+# Design Decisions
+
+In the simplest case, the generated words are given without any further adjustments for the Tolkienian language. The English translation lists the part of speech:
+
+> corto|circle (n)
+>
+> costaima|debatable (adj)
+
+If a word is listed with a dedicated word stem, that stem is appended in parentheses:
+
+> oron (oront-)|mountain (n)
+
+Some words have several translation. The script tries to make the Tolkienian side unique, first by checking if the part of speech will do that:
+
+> cuiva (adj)|awake (adj)
+>
+> cuiva (n)|animal (n)
+
+If this does not suffice to make the words unique, and if a category is provided for that word, then the latter is used instead:
+
+> au (Mind and Thought)|if only (adv)
+>
+> au (Spatial Relations)|away, off, not here (of position) (adv)
+
+Finally, if this doesn't help as well, the translations are merged into one:
+
+> hyarna|(1) compact, [ᴹQ.] compressed; (2) southern (adj)
+
+This last step is also true for English words with several Tolkienian translations:
+
+> (1) artatúrë; (2) ohérë|government (n)
+
+Some Tolkienian words are listed with variant versions. The script recognises this and treats them as a single word, so the inputs `lá` and `(a)lá` are listed as one:
+
+> (a)lá|yes (interj)
+
+Some English translations are prepended with the marker `*`, `?` or `⚠️`, denoting some uncertainty. These markers are retained, unless the word is listed more than once, and at least one translation does not have this marker:
+
+> canya-|?to command (vb)
+
+Several words are provided with additional information on the spelling in Tengwar, if it deviates from the default. This information is appended in brackets:
+
+> isilmë [þ]|moonlight (n)
+>
+> venwa [w]|lime (fruit) (n)
+
+## Special Tengwar Treatment for Quenya
+
+The list also contains some archaïc words which still incorporate the old spelling. To reduce duplicated information, the script recognises these and derives the Tengwar annotations. Since this treatment needs to happen on a per language and per sound basis, it is currently implemented only for my personal use-case (Neo-)Quenya. The relevant linguistic information is taken from the [Eldamo Quenya course](https://eldamo.org/intro-quenya/eldamo-intro-quenya-03.html#c3-1-2).
+
+Any `þ` is replaced with `s`, so `minaþurië` becomes:
+
+> minasurië [þ]|enquiry (n)
+
+Initial `ñ-` is replaced with `n-`, turning `ñwalmë` into:
+
+> nwalmë [ñ-]|torment (n)
+
+The rules for `w` [are more complicated](https://eldamo.org/content/words/word-3625908403.html). Any `w` following a consonant or the diphthongs `ai` or `oi` is retained, any other `w` is replaced with `v`.
+
+Because the archaïc `w`-origin of `v` [is *not* represented in Tengwar](https://eldamo.org/intro-quenya/eldamo-intro-quenya-03.html#c3-1-2-2), it is also *not* included in the output:
+
+> artanwa|award (n)
+>
+> maiwë|gull (n)
+>
+> oiwa|glossy (adj)
+>
+> lassevinta|leaf fall, autumn, *(lit.) leaf blowing (n)
+>
+> vilya|air, sky (n)
+
 # Acknowledgments
 
 Almost all the credit here goes to [Paul Strack][pfstrack], maintainer of the [Eldamo website][eldamo] and [database][eldamo-data]. They gathered all canonical Tolkienian words in one place, collected thousands of fan-made extensions, and organise it all in the structured xml format. Finding this database made writing this script pure bliss.
