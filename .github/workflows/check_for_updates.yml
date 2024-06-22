@@ -11,6 +11,9 @@ jobs:
         steps:
         - uses: actions/checkout@v2
 
+        - name: Assure a re-download of the wordlist
+          run: python3 generate.py Adunaic --check-for-updates
+
         - name: Generate wordlists
           run: ./generate_all.sh
 
