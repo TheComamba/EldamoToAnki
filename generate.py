@@ -134,7 +134,33 @@ def get_category(word, categories):
                 return cat.get("label")
     return None
 
+def is_quenya(word):
+    return word.get('language') == QUENYA.get('id') or word.get('language') == NEO_QUENYA.get('id')
+
+def include_tengwar_info_for_quenya(word):
+    if "þ" in word["tolkienian_word"]:
+        word["tolkienian_word"] = word["tolkienian_word"].replace("þ", "s")
+        word["tengwar"] = "þ"
+    if word["tolkienian_word"].startswith("ñ"):
+        word["tolkienian_word"] = word["tolkienian_word"].replace("ñ", "n")
+        word["tengwar"] = "ñ-"
+    # TODO: Handle various w cases.
+    
+    tengwar_info = word.get("tengwar")
+    if tengwar_info is not None and tengwar_info != "w":
+        word["tolkienian_word"] += f" [{tengwar_info}]"
+        del word["tengwar"]
+        return
+       
+
 def include_tengwar_info(word):
+    if is_quenya(word):
+        include_tengwar_info_for_quenya(word)
+    else:
+        tengwar_info = word.get("tengwar")
+        if tengwar_info is not None:
+            word["tolkienian_word"] += f" [{tengwar_info}]"
+            del word["tengwar"]
 
 def word_to_map(all_words, word, categories, args):
     word_map = {}
@@ -151,10 +177,13 @@ def word_to_map(all_words, word, categories, args):
     word_map["stem"] = word.get('stem')
     word_map["category"] = get_category(word, categories)
     word_map["tengwar"] = word.get('tengwar')
+    word_map["language"] = word.get('l')
 
     for key in word_map.keys():
         if word_map.get(key) is not None:
             word_map[key] = word_map[key].replace(DELIMITER, "")
+
+    include_tengwar_info(word_map)
 
     return word_map
 
@@ -314,15 +343,12 @@ def remove_duplications(all_words):
 
 def format_word(word):
     tolkienian = word.get("tolkienian_word")
-    tengwar = word.get("tengwar")
     stem = word.get("stem")
     extra_info = word.get("extra_info")
     english = word.get("english_word")
     part_of_speech = word.get("part_of_speech")
 
     formatted_word = f"{tolkienian}"
-    if tengwar is not None:
-        formatted_word += f" [{tengwar}]"
     if stem is not None:
         formatted_word += f" ({stem})"
     if extra_info is not None:

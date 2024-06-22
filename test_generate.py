@@ -3,68 +3,68 @@ from generate import add_uniqueness_via_field, are_english_duplicates, are_tolki
 
 class TestGenerate(unittest.TestCase):
     def test_include_tengwar_info(self):
-        word = {"v": "mísë", "tengwar": "þ"}
+        word = {"tolkienian_word": "mísë", "tengwar": "þ"}
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "mísë [þ]")
+        self.assertEqual(word["tolkienian_word"], "mísë [þ]")
 
     def test_include_tengwar_info_for_any_language(self):
-        word = {"l": "s", "v": "gaur", "tengwar": "ng-"}
+        word = {"language": "s", "tolkienian_word": "gaur", "tengwar": "ng-"}
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "gaur [ng-]")
+        self.assertEqual(word["tolkienian_word"], "gaur [ng-]")
     
     def test_do_not_include_tengwar_info_for_quenya_w(self):
-        word = {"l": "q", "v": "vingë", "tengwar": "w"}
+        word = {"language": "q", "tolkienian_word": "vingë", "tengwar": "w"}
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "vingë")
+        self.assertEqual(word["tolkienian_word"], "vingë")
 
     def test_include_implicit_tengwar_info_for_thule(self):
-        word = {"l": "q", "v": "míþë"}
+        word = {"language": "q", "tolkienian_word": "míþë"}
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "mísë [þ]")
+        self.assertEqual(word["tolkienian_word"], "mísë [þ]")
     
     def test_include_implicit_tengwar_info_for_w(self):
-        word = {"l": "q", "v": "wilya"} # Replaced at beginning of word
+        word = {"language": "q", "tolkienian_word": "wilya"} # Replaced at beginning of word
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "vilya") # No mention of the original spelling
+        self.assertEqual(word["tolkienian_word"], "vilya") # No mention of the original spelling
 
-        word = {"l": "q", "v": "Wilya"} # Also works for capital letter
+        word = {"language": "q", "tolkienian_word": "Wilya"} # Also works for capital letter
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "Vilya")
+        self.assertEqual(word["tolkienian_word"], "Vilya")
 
-        word = {"l": "q", "v": "awalda"} # Replaced after vowel
+        word = {"language": "q", "tolkienian_word": "awalda"} # Replaced after vowel
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "avalda")
+        self.assertEqual(word["tolkienian_word"], "avalda")
 
-        word = {"l": "q", "v": "aiwendil"} # Not replaced after ai
+        word = {"language": "q", "tolkienian_word": "aiwendil"} # Not replaced after ai
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "aiwendil")
+        self.assertEqual(word["tolkienian_word"], "aiwendil")
 
-        word = {"l": "q", "v": "oiwa"} # Not replaced after oi
+        word = {"language": "q", "tolkienian_word": "oiwa"} # Not replaced after oi
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "oiwa")
+        self.assertEqual(word["tolkienian_word"], "oiwa")
 
-        word = {"l": "q", "v": "inwe"} # Not replaced after consonant
+        word = {"language": "q", "tolkienian_word": "inwe"} # Not replaced after consonant
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "inwe")
+        self.assertEqual(word["tolkienian_word"], "inwe")
 
     def test_include_implicit_tengwar_info_for_initial_ng(self):
-        word = {"l": "q", "v": "ñauna-"}
+        word = {"language": "q", "tolkienian_word": "ñauna-"}
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "nauna- [ñ-]")
+        self.assertEqual(word["tolkienian_word"], "nauna- [ñ-]")
 
-        word = {"l": "q", "v": "Ñoldo"}
+        word = {"language": "q", "tolkienian_word": "Ñoldo"}
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "Noldo [ñ-]")
+        self.assertEqual(word["tolkienian_word"], "Noldo [ñ-]")
 
     def test_include_implicit_tengwar_info_operates_on_neo_quenya(self):
-        word = {"l": "nq", "v": "míþë"}
+        word = {"language": "nq", "tolkienian_word": "míþë"}
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "mísë [þ]")
+        self.assertEqual(word["tolkienian_word"], "mísë [þ]")
 
     def test_include_implicit_tengwar_info_only_operates_on_quenya(self):
-        word = {"l": "t", "v": "þarma"}
+        word = {"language": "t", "tolkienian_word": "þarma"}
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "þarma")
+        self.assertEqual(word["tolkienian_word"], "þarma")
 
     def test_words_are_tolkienian_duplicates(self):
         word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
