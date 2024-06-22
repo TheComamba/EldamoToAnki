@@ -20,3 +20,15 @@ if not os.path.exists(old_data_file_path):
     print("Choose the 'Notes in Plain Text' option, tick the 'Include unique identifier' checkbox, and click 'Export'.")
     print("Save the file to ", old_data_file_path)
     sys.exit(1)
+
+new_data = []
+with open(new_data_file_path, "r") as new_data_file:
+    for line in new_data_file:
+        front, back = line.strip().split("|", 1)
+        new_data.append((front, back))
+
+old_data = []
+with open(old_data_file_path, "r") as old_data_file:
+    for line in old_data_file:
+        guid, front, back = line.strip().split("\t", 1)
+        old_data.append((guid, front, back))
