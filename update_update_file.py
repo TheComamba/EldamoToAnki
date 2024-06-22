@@ -24,11 +24,22 @@ if not os.path.exists(old_data_file_path):
 new_data = []
 with open(new_data_file_path, "r") as new_data_file:
     for line in new_data_file:
-        front, back = line.strip().split("|", 1)
+        front, back = line.strip().split("|")
         new_data.append((front, back))
 
+preamble = []
 old_data = []
 with open(old_data_file_path, "r") as old_data_file:
     for line in old_data_file:
-        guid, front, back = line.strip().split("\t", 1)
-        old_data.append((guid, front, back))
+        if line.startswith("#"):
+            preamble.append(line)
+        else:
+            guid, front, back = line.strip().split("\t")
+            old_data.append((guid, front, back))
+
+with open(old_data_file_path, "w") as old_data_file:
+    for line in preamble:
+        old_data_file.write(line)
+    
+    for guid, front, back in old_data:
+        old_data_file.write(f"{guid}\t{front}\t{back}\t\n")
