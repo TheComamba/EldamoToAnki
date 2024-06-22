@@ -37,6 +37,49 @@ with open(old_data_file_path, "r") as old_data_file:
             guid, front, back = line.strip().split("\t")
             old_data.append((guid, front, back))
 
+deleted_cards = []
+for i, (guid, front, back) in enumerate(old_data):
+    wasFound = False
+    for new_front, new_back in new_data:
+        isSameFront = front == new_front
+        isSameBack = back == new_back
+        if isSameFront and isSameBack:
+            wasFound = True
+            break
+        if isSameFront and not isSameBack:
+            old_data[i] = (guid, front, new_back)
+            wasFound = True
+            break
+        if not isSameFront and isSameBack:
+            old_data[i] = (guid, new_front, back)
+            wasFound = True
+            break
+    if not wasFound:
+        deleted_cards.append((guid, front, back))
+
+if len(deleted_cards) > 0:
+    print("The following outdated cards need to be deleted manually:")
+for guid, front, back in deleted_cards:
+    print(guid, "|", front, "|", back)
+    old_data.remove((guid, front, back))
+
+new_cards = []
+for new_front, new_back in new_data:
+    is_new = True
+    for guid, front, back in old_data:
+        isSameFront = front == new_front
+        isSameBack = back == new_back
+        if isSameFront and isSameBack:
+            is_new = False
+            break
+    if is_new:
+        new_cards.append((new_front, new_back))
+
+if len(new_cards) > 0:
+    print("The following cards need to be added manually:")
+for front, back in new_cards:
+    print("|", front, "|", back)
+
 with open(old_data_file_path, "w") as old_data_file:
     for line in preamble:
         old_data_file.write(line)
