@@ -88,3 +88,7 @@ with open(old_data_file_path, "w") as old_data_file:
     
     for guid, front, back in old_data:
         old_data_file.write(f"{guid}\t{front}\t{back}\t\n")
+
+print()
+print("Finished updating.")
+print("When importing the file, make very sure to update front and back, not front and tags!")
