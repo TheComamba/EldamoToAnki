@@ -7,6 +7,16 @@ class TestGenerate(unittest.TestCase):
         include_tengwar_info(word)
         self.assertEqual(word["v"], "mísë [þ]")
 
+    def test_include_tengwar_info_for_any_language(self):
+        word = {"l": "s", "v": "gaur", "tengwar": "ng-"}
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "gaur [ng-]")
+    
+    def test_do_not_include_tengwar_info_for_quenya_w(self):
+        word = {"l": "q", "v": "vingë", "tengwar": "w"}
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "vingë")
+
     def test_include_implicit_tengwar_info_for_thule(self):
         word = {"l": "q", "v": "míþë"}
         include_tengwar_info(word)
@@ -15,15 +25,23 @@ class TestGenerate(unittest.TestCase):
     def test_include_implicit_tengwar_info_for_w(self):
         word = {"l": "q", "v": "wilya"} # Replaced at beginning of word
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "vilya [w]")
+        self.assertEqual(word["v"], "vilya") # No mention of the original spelling
+
+        word = {"l": "q", "v": "Wilya"} # Also works for capital letter
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "Vilya")
 
         word = {"l": "q", "v": "awalda"} # Replaced after vowel
         include_tengwar_info(word)
-        self.assertEqual(word["v"], "avalda [w]")
+        self.assertEqual(word["v"], "avalda")
 
-        word = {"l": "q", "v": "aiwendil"} # Not replaced after diphthong
+        word = {"l": "q", "v": "aiwendil"} # Not replaced after ai
         include_tengwar_info(word)
         self.assertEqual(word["v"], "aiwendil")
+
+        word = {"l": "q", "v": "oiwa"} # Not replaced after oi
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "oiwa")
 
         word = {"l": "q", "v": "inwe"} # Not replaced after consonant
         include_tengwar_info(word)
@@ -33,6 +51,20 @@ class TestGenerate(unittest.TestCase):
         word = {"l": "q", "v": "ñauna-"}
         include_tengwar_info(word)
         self.assertEqual(word["v"], "nauna- [ñ-]")
+
+        word = {"l": "q", "v": "Ñoldo"}
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "Noldo [ñ-]")
+
+    def test_include_implicit_tengwar_info_operates_on_neo_quenya(self):
+        word = {"l": "nq", "v": "míþë"}
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "mísë [þ]")
+
+    def test_include_implicit_tengwar_info_only_operates_on_quenya(self):
+        word = {"l": "t", "v": "þarma"}
+        include_tengwar_info(word)
+        self.assertEqual(word["v"], "þarma")
 
     def test_words_are_tolkienian_duplicates(self):
         word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
