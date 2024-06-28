@@ -13,29 +13,29 @@ ADUNAIC = { "id": "ad", "name": "Adunaic" }
 SUPPORTED_LANGUAGES.append(ADUNAIC)
 BLACK_SPEECH = { "id": "bs", "name": "Black-Speech" }
 SUPPORTED_LANGUAGES.append(BLACK_SPEECH)
-EARLY_NOLDORIN = { "id": "en", "name": "Early-Noldorin" }
+EARLY_NOLDORIN = { "id": "en", "name": "Early-Noldorin", "marker": "ᴱN" }
 SUPPORTED_LANGUAGES.append(EARLY_NOLDORIN)
-EARLY_QUENYA = { "id": "eq", "name": "Early-Quenya" }
+EARLY_QUENYA = { "id": "eq", "name": "Early-Quenya", "marker": "ᴱQ"}
 SUPPORTED_LANGUAGES.append(EARLY_QUENYA)
-GNOMISH = { "id": "g", "name": "Gnomish" }
+GNOMISH = { "id": "g", "name": "Gnomish", "marker": "G" }
 SUPPORTED_LANGUAGES.append(GNOMISH)
 KHUZDUL = { "id": "kh", "name": "Khuzdul" }
 SUPPORTED_LANGUAGES.append(KHUZDUL)
-NOLDORIN = { "id": "n", "name": "Noldorin" }
+NOLDORIN = { "id": "n", "name": "Noldorin", "marker": "N"}
 SUPPORTED_LANGUAGES.append(NOLDORIN)
 PRIMITIVE = { "id": "p", "name": "Primitive" }
 SUPPORTED_LANGUAGES.append(PRIMITIVE)
 NEO_PRIMITIVE = { "id": "np", "name": "Neo-Primitive" }
 SUPPORTED_LANGUAGES.append(NEO_PRIMITIVE)
-MIDDLE_QUENYA = { "id": "mq", "name": "Middle-Quenya" }
+MIDDLE_QUENYA = { "id": "mq", "name": "Middle-Quenya", "marker": "ᴹQ"}
 SUPPORTED_LANGUAGES.append(MIDDLE_QUENYA)
-QUENYA = { "id": "q", "name": "Quenya"}
+QUENYA = { "id": "q", "name": "Quenya", "marker": "Q"}
 SUPPORTED_LANGUAGES.append(QUENYA)
-NEO_QUENYA = { "id": "nq", "name": "Neo-Quenya"}
+NEO_QUENYA = { "id": "nq", "name": "Neo-Quenya", "marker": "ᴺQ"}
 SUPPORTED_LANGUAGES.append(NEO_QUENYA)
-SINDARIN = { "id": "s", "name": "Sindarin"}
+SINDARIN = { "id": "s", "name": "Sindarin", "marker": "S"}
 SUPPORTED_LANGUAGES.append(SINDARIN)
-NEO_SINDARIN = { "id": "ns", "name": "Neo-Sindarin"}
+NEO_SINDARIN = { "id": "ns", "name": "Neo-Sindarin", "marker": "ᴺS"}
 SUPPORTED_LANGUAGES.append(NEO_SINDARIN)
 TELERIN = { "id": "t", "name": "Telerin"}
 SUPPORTED_LANGUAGES.append(TELERIN)
@@ -57,6 +57,7 @@ def parse_args():
     parser.add_argument('--collective-names', action='store_true', default=False, help='Include names for collective people')
     parser.add_argument('--proper-names', action='store_true', default=False, help='Include proper names')
     parser.add_argument('--phrases', action='store_true', default=False, help='Include phrases')
+    parser.add_argument('--include-origin', action='store_true', default=False, help='Include the linguistic origin of the word in the card')
     parser.add_argument('--include-deprecated', action='store_true', default=False, help='Include words that Paul Strack has marked as deprecated in neo lists')
     parser.add_argument('--check-for-updates', action='store_true', default=False, help='Forces a re-download of the Eldamo database')
     parser.add_argument('--verbose', action='store_true', default=False, help='Print more output')
@@ -201,6 +202,15 @@ def include_tengwar_info(word):
             word["tolkienian_word"] += f" [{tengwar_info}]"
             del word["tengwar"]
 
+def remove_origin_marker(word):
+    for language in SUPPORTED_LANGUAGES:
+        marker = language.get('marker')
+        if marker is not None:
+            full_marker = f"[{marker}.] "
+            word["english_word"] = word["english_word"].replace(full_marker, "")
+            full_marker = f"[{marker}.]"
+            word["english_word"] = word["english_word"].replace(full_marker, "")
+
 def remove_deprecated_translations(word):
     if '⚠️' in word["english_word"]:
         index = word["english_word"].find('⚠️')
@@ -234,8 +244,11 @@ def word_to_map(all_words, word, categories, args):
         if word_map.get(key) is not None:
             word_map[key] = word_map[key].replace(DELIMITER, "")
 
-    if args.neo and not args.include_deprecated:
-        remove_deprecated_translations(word_map)
+    if args.neo:
+        if not args.include_deprecated:
+            remove_deprecated_translations(word_map)
+        if not args.include_origin:
+            remove_origin_marker(word_map)
     include_tengwar_info(word_map)
 
     return word_map

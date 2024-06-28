@@ -41,6 +41,7 @@ You can add optional arguments:
 - `--collective-names`: Include names for collective people.
 - `--proper-names`: Include proper names.
 - `--phrases`: Include phrases.
+- `--include-origin`: Include the linguistic origin of the word in the card.
 - `--include-deprecated`: Include words that Paul Strack has marked as deprecated in neo lists.
 - `--check-for-updates`: Forces a re-download of the Eldamo database.
 - `--verbose`: Print more output.

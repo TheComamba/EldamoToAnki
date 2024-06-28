@@ -1,5 +1,5 @@
 import unittest
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, remove_deprecated_translations, remove_duplicate_translations, main
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_origin_marker
 
 class TestGenerate(unittest.TestCase):
     def test_include_tengwar_info(self):
@@ -74,6 +74,11 @@ class TestGenerate(unittest.TestCase):
         word = {"tolkienian_word": "curu", "english_word": "skill; ⚠️[ᴱQ.] magic, wizardry"}
         remove_deprecated_translations(word)
         self.assertEqual(word["english_word"], "skill")
+
+    def test_removing_origin_marker(self):
+        word = {"tolkienian_word": "curu", "english_word": "skill; [ᴱQ.] magic, wizardry"}
+        remove_origin_marker(word)
+        self.assertEqual(word["english_word"], "skill; magic, wizardry")
 
     def test_words_are_tolkienian_duplicates(self):
         word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
