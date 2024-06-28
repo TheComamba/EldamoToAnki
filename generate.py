@@ -10,10 +10,14 @@ INPUT_FILE = "input/eldamo-data.xml"
 
 ADUNAIC = { "id": "ad", "name": "Adunaic" }
 BLACK_SPEECH = { "id": "bs", "name": "Black-Speech" }
+EARLY_NOLDORIN = { "id": "en", "name": "Early-Noldorin" }
+EARLY_QUENYA = { "id": "eq", "name": "Early-Quenya" }
+GNOMISH = { "id": "g", "name": "Gnomish" }
 KHUZDUL = { "id": "kh", "name": "Khuzdul" }
 NOLDORIN = { "id": "n", "name": "Noldorin" }
 PRIMITIVE = { "id": "p", "name": "Primitive" }
 NEO_PRIMITIVE = { "id": "np", "name": "Neo-Primitive" }
+MIDDLE_QUENYA = { "id": "mq", "name": "Middle-Quenya" }
 QUENYA = { "id": "q", "name": "Quenya"}
 NEO_QUENYA = { "id": "nq", "name": "Neo-Quenya"}
 SINDARIN = { "id": "s", "name": "Sindarin"}
