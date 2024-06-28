@@ -31,7 +31,7 @@ UNGLOSSED = "[unglossed]"
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate text files that are easily imported with Anki.')
     parser.add_argument('language', type=str, help='Language to generate')
-    parser.add_argument('--neo-words', action='store_true', default=False, help='Include words invented by fans rather than Tolkien')
+    parser.add_argument('--neo', action='store_true', default=False, help='Assemble Neo-Eldarin lists, including words invented by fans rather than Tolkien')
     parser.add_argument('--individual-names', action='store_true', default=False, help='Include names of individuals and places')
     parser.add_argument('--collective-names', action='store_true', default=False, help='Include names for collective people')
     parser.add_argument('--proper-names', action='store_true', default=False, help='Include proper names')
@@ -74,13 +74,13 @@ def get_languages_to_generate(args):
     if not is_supported:
         raise ValueError(f"Unsupported language: {args.language}")
     
-    if args.neo_words:
+    if args.neo:
         if languages[0] == QUENYA:
             languages.append(NEO_QUENYA)
         elif languages[0] == SINDARIN:
             languages.append(NEO_SINDARIN)
         else:
-            raise ValueError(f"Neo-words are not supported for {languages[0]['name']}")
+            raise ValueError(f"Neo lists are not supported for {languages[0]['name']}")
     return languages
 
 def get_speech_types_to_exclude(args):
@@ -113,7 +113,7 @@ def find_referenced_word(referencer, all_words):
 
 def find_translation(all_words, word, args):
     english_word = None
-    if args.neo_words:
+    if args.neo:
         english_word = word.get('ngloss')
     if english_word == UNGLOSSED:
         english_word = None
@@ -382,7 +382,7 @@ def format_words(words):
 
 def write_to_file(args, languages, words):
     language_name = languages[0].get("name")
-    if args.neo_words:
+    if args.neo:
         language_name = "Neo-" + language_name
     output_dir = "output"
     if not os.path.exists(output_dir):
@@ -417,7 +417,7 @@ def main(args):
         
         filtered_words = [word for word in words if word.get('l') in language_ids]
         filtered_words = [word for word in filtered_words if word.get('speech') not in speech_types_to_exclude]
-        if args.neo_words and not args.include_deprecated:
+        if args.neo and not args.include_deprecated:
             filtered_words = [word for word in filtered_words if word.find('deprecated') is None]
         
         print_parts_of_speech(filtered_words)

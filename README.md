@@ -30,7 +30,7 @@ Depending on your Python install, the first command may be `py` or `python` inst
 For the `<language>` argument, type the name of the language, or its id (usually its first letter).
 
 You can add optional arguments:
-- `--neo-words`: Include words invented by fans rather than Tolkien.
+- `--neo`: Assemble Neo-Eldarin lists, including words invented by fans rather than Tolkien.
 - `--individual-names`: Include names of individuals and places.
 - `--collective-names`: Include names for collective people.
 - `--proper-names`: Include proper names.
