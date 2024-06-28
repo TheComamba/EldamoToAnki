@@ -8,22 +8,37 @@ import xml.etree.ElementTree as ElementTree
 INPUT_URL = "https://github.com/pfstrack/eldamo/raw/master/src/data/eldamo-data.xml"
 INPUT_FILE = "input/eldamo-data.xml"
 
+SUPPORTED_LANGUAGES = []
 ADUNAIC = { "id": "ad", "name": "Adunaic" }
+SUPPORTED_LANGUAGES.append(ADUNAIC)
 BLACK_SPEECH = { "id": "bs", "name": "Black-Speech" }
+SUPPORTED_LANGUAGES.append(BLACK_SPEECH)
 EARLY_NOLDORIN = { "id": "en", "name": "Early-Noldorin" }
+SUPPORTED_LANGUAGES.append(EARLY_NOLDORIN)
 EARLY_QUENYA = { "id": "eq", "name": "Early-Quenya" }
+SUPPORTED_LANGUAGES.append(EARLY_QUENYA)
 GNOMISH = { "id": "g", "name": "Gnomish" }
+SUPPORTED_LANGUAGES.append(GNOMISH)
 KHUZDUL = { "id": "kh", "name": "Khuzdul" }
+SUPPORTED_LANGUAGES.append(KHUZDUL)
 NOLDORIN = { "id": "n", "name": "Noldorin" }
+SUPPORTED_LANGUAGES.append(NOLDORIN)
 PRIMITIVE = { "id": "p", "name": "Primitive" }
+SUPPORTED_LANGUAGES.append(PRIMITIVE)
 NEO_PRIMITIVE = { "id": "np", "name": "Neo-Primitive" }
+SUPPORTED_LANGUAGES.append(NEO_PRIMITIVE)
 MIDDLE_QUENYA = { "id": "mq", "name": "Middle-Quenya" }
+SUPPORTED_LANGUAGES.append(MIDDLE_QUENYA)
 QUENYA = { "id": "q", "name": "Quenya"}
+SUPPORTED_LANGUAGES.append(QUENYA)
 NEO_QUENYA = { "id": "nq", "name": "Neo-Quenya"}
+SUPPORTED_LANGUAGES.append(NEO_QUENYA)
 SINDARIN = { "id": "s", "name": "Sindarin"}
+SUPPORTED_LANGUAGES.append(SINDARIN)
 NEO_SINDARIN = { "id": "ns", "name": "Neo-Sindarin"}
+SUPPORTED_LANGUAGES.append(NEO_SINDARIN)
 TELERIN = { "id": "t", "name": "Telerin"}
-SUPPORTED_LANGUAGES = [ADUNAIC, BLACK_SPEECH, KHUZDUL, NOLDORIN, PRIMITIVE, QUENYA, SINDARIN, TELERIN]
+SUPPORTED_LANGUAGES.append(TELERIN)
 
 SPEECH_INDIVIDUAL_NAMES = ["fem-name", "masc-name", "place-name"]
 SPEECH_COLLECTIVE_NAMES = "collective-name"
