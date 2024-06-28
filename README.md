@@ -13,6 +13,8 @@ The lists are:
 - Black Speech (ca. 40 cards)
 - Khuzdul (ca. 40 cards)
 - Noldorin (ca. 1300 cards)
+- Primitive Elvish (ca. 800 cards)
+- Neo-Primitive Elvish (ca. 800 cards)
 - Quenya (ca. 2200 cards)
 - Neo-Quenya (ca. 4400 cards)
 - Sindarin (ca. 1200 cards)

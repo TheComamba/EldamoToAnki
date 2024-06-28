@@ -12,12 +12,14 @@ ADUNAIC = { "id": "ad", "name": "Adunaic" }
 BLACK_SPEECH = { "id": "bs", "name": "Black-Speech" }
 KHUZDUL = { "id": "kh", "name": "Khuzdul" }
 NOLDORIN = { "id": "n", "name": "Noldorin" }
+PRIMITIVE = { "id": "p", "name": "Primitive" }
+NEO_PRIMITIVE = { "id": "np", "name": "Neo-Primitive" }
 QUENYA = { "id": "q", "name": "Quenya"}
 NEO_QUENYA = { "id": "nq", "name": "Neo-Quenya"}
 SINDARIN = { "id": "s", "name": "Sindarin"}
 NEO_SINDARIN = { "id": "ns", "name": "Neo-Sindarin"}
 TELERIN = { "id": "t", "name": "Telerin"}
-SUPPORTED_LANGUAGES = [ADUNAIC, BLACK_SPEECH, KHUZDUL, NOLDORIN, QUENYA, SINDARIN, TELERIN]
+SUPPORTED_LANGUAGES = [ADUNAIC, BLACK_SPEECH, KHUZDUL, NOLDORIN, PRIMITIVE, QUENYA, SINDARIN, TELERIN]
 
 SPEECH_INDIVIDUAL_NAMES = ["fem-name", "masc-name", "place-name"]
 SPEECH_COLLECTIVE_NAMES = "collective-name"
@@ -75,7 +77,9 @@ def get_languages_to_generate(args):
         raise ValueError(f"Unsupported language: {args.language}")
     
     if args.neo:
-        if languages[0] == QUENYA:
+        if languages[0] == PRIMITIVE:
+            languages.append(NEO_PRIMITIVE)
+        elif languages[0] == QUENYA:
             languages.append(NEO_QUENYA)
         elif languages[0] == SINDARIN:
             languages.append(NEO_SINDARIN)

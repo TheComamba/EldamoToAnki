@@ -8,6 +8,10 @@ python3 generate.py Khuzdul
 echo
 python3 generate.py Noldorin
 echo
+python3 generate.py Primitive
+echo
+python3 generate.py Primitive --neo
+echo
 python3 generate.py Quenya
 echo
 python3 generate.py Quenya --neo
