@@ -8,18 +8,37 @@ import xml.etree.ElementTree as ElementTree
 INPUT_URL = "https://github.com/pfstrack/eldamo/raw/master/src/data/eldamo-data.xml"
 INPUT_FILE = "input/eldamo-data.xml"
 
+SUPPORTED_LANGUAGES = []
 ADUNAIC = { "id": "ad", "name": "Adunaic" }
+SUPPORTED_LANGUAGES.append(ADUNAIC)
 BLACK_SPEECH = { "id": "bs", "name": "Black-Speech" }
+SUPPORTED_LANGUAGES.append(BLACK_SPEECH)
+EARLY_NOLDORIN = { "id": "en", "name": "Early-Noldorin" }
+SUPPORTED_LANGUAGES.append(EARLY_NOLDORIN)
+EARLY_QUENYA = { "id": "eq", "name": "Early-Quenya" }
+SUPPORTED_LANGUAGES.append(EARLY_QUENYA)
+GNOMISH = { "id": "g", "name": "Gnomish" }
+SUPPORTED_LANGUAGES.append(GNOMISH)
 KHUZDUL = { "id": "kh", "name": "Khuzdul" }
+SUPPORTED_LANGUAGES.append(KHUZDUL)
 NOLDORIN = { "id": "n", "name": "Noldorin" }
+SUPPORTED_LANGUAGES.append(NOLDORIN)
 PRIMITIVE = { "id": "p", "name": "Primitive" }
+SUPPORTED_LANGUAGES.append(PRIMITIVE)
 NEO_PRIMITIVE = { "id": "np", "name": "Neo-Primitive" }
+SUPPORTED_LANGUAGES.append(NEO_PRIMITIVE)
+MIDDLE_QUENYA = { "id": "mq", "name": "Middle-Quenya" }
+SUPPORTED_LANGUAGES.append(MIDDLE_QUENYA)
 QUENYA = { "id": "q", "name": "Quenya"}
+SUPPORTED_LANGUAGES.append(QUENYA)
 NEO_QUENYA = { "id": "nq", "name": "Neo-Quenya"}
+SUPPORTED_LANGUAGES.append(NEO_QUENYA)
 SINDARIN = { "id": "s", "name": "Sindarin"}
+SUPPORTED_LANGUAGES.append(SINDARIN)
 NEO_SINDARIN = { "id": "ns", "name": "Neo-Sindarin"}
+SUPPORTED_LANGUAGES.append(NEO_SINDARIN)
 TELERIN = { "id": "t", "name": "Telerin"}
-SUPPORTED_LANGUAGES = [ADUNAIC, BLACK_SPEECH, KHUZDUL, NOLDORIN, PRIMITIVE, QUENYA, SINDARIN, TELERIN]
+SUPPORTED_LANGUAGES.append(TELERIN)
 
 SPEECH_INDIVIDUAL_NAMES = ["fem-name", "masc-name", "place-name"]
 SPEECH_COLLECTIVE_NAMES = "collective-name"
@@ -33,13 +52,14 @@ UNGLOSSED = "[unglossed]"
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate text files that are easily imported with Anki.')
     parser.add_argument('language', type=str, help='Language to generate')
-    parser.add_argument('--neo', action='store_true', default=False, help='Assemble Neo-Eldarin lists, including words invented by fans rather than Tolkien')
+    parser.add_argument('--neo', action='store_true', default=False, help='Assemble Neo-Eldarin lists, drawing from words invented by Tolkien throughout his life as well as fan-invented words')
     parser.add_argument('--individual-names', action='store_true', default=False, help='Include names of individuals and places')
     parser.add_argument('--collective-names', action='store_true', default=False, help='Include names for collective people')
     parser.add_argument('--proper-names', action='store_true', default=False, help='Include proper names')
     parser.add_argument('--phrases', action='store_true', default=False, help='Include phrases')
     parser.add_argument('--include-deprecated', action='store_true', default=False, help='Include words that Paul Strack has marked as deprecated in neo lists')
     parser.add_argument('--check-for-updates', action='store_true', default=False, help='Forces a re-download of the Eldamo database')
+    parser.add_argument('--verbose', action='store_true', default=False, help='Print more output')
 
     return parser.parse_args()
 
@@ -81,8 +101,13 @@ def get_languages_to_generate(args):
             languages.append(NEO_PRIMITIVE)
         elif languages[0] == QUENYA:
             languages.append(NEO_QUENYA)
+            languages.append(MIDDLE_QUENYA)
+            languages.append(EARLY_QUENYA)
         elif languages[0] == SINDARIN:
             languages.append(NEO_SINDARIN)
+            languages.append(NOLDORIN)
+            languages.append(EARLY_NOLDORIN)
+            languages.append(GNOMISH)
         else:
             raise ValueError(f"Neo lists are not supported for {languages[0]['name']}")
     return languages
@@ -190,12 +215,14 @@ def word_to_map(all_words, word, categories, args):
     word_map = {}
     word_map["tolkienian_word"] = word.get('v')
     if word_map.get("tolkienian_word") is None:
-        print("Skipping word without value: ")
-        debug_print_word(word)
+        if args.verbose:
+            print("Skipping word without value: ")
+            debug_print_word(word)
         return None
     word_map["english_word"] = find_translation(all_words, word, args)
     if word_map.get("english_word") is None:
-        print("Skipping word without translation: ", word_map.get("tolkienian_word"))
+        if args.verbose:
+            print("Skipping word without translation: ", word_map.get("tolkienian_word"))
         return None
     word_map["part_of_speech"] = word.get('speech')
     word_map["stem"] = word.get('stem')
@@ -315,7 +342,7 @@ def remove_duplicate_translations(words):
     deduped = words.copy()
     for word in words:
         for variant in words:
-            if is_contained_in_variants(word, variant):
+            if is_contained_in_variants(word, variant) and word in deduped:
                 deduped.remove(word)
     deduped = list(set(deduped))
     return deduped
@@ -436,12 +463,14 @@ def main(args):
         if args.neo and not args.include_deprecated:
             filtered_words = [word for word in filtered_words if word.find('deprecated') is None]
         
-        print_parts_of_speech(filtered_words)
+        if args.verbose:
+            print_parts_of_speech(filtered_words)
 
         word_maps = words_to_maps(filtered_words, filtered_words, categories, args)
 
         word_maps = remove_duplications(word_maps)
-        print("Collected ", len(word_maps), " cards")
+        if args.verbose:
+            print("Collected ", len(word_maps), " cards")
 
         formatted_words = format_words(word_maps)
 

@@ -64,7 +64,7 @@ for guid, front, back in deleted_cards:
     print(guid, "|", front, "|", back)
     old_data.remove((guid, front, back))
 
-new_cards = []
+has_new_cards = False
 for new_front, new_back in new_data:
     is_new = True
     for guid, front, back in old_data:
@@ -74,13 +74,12 @@ for new_front, new_back in new_data:
             is_new = False
             break
     if is_new:
-        new_cards.append((new_front, new_back))
+        has_new_cards = True
+        break
 
-if len(new_cards) > 0:
+if has_new_cards:
     print()
-    print("The following cards need to be added manually:")
-for front, back in new_cards:
-    print("|", front, "|", back)
+    print("New cards were added. Please import the file into Anki **after** adjusting the currently stored cards.")
 
 with open(old_data_file_path, "w") as old_data_file:
     for line in preamble:
