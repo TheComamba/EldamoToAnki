@@ -31,11 +31,12 @@ UNGLOSSED = "[unglossed]"
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate text files that are easily imported with Anki.')
     parser.add_argument('language', type=str, help='Language to generate')
-    parser.add_argument('--neo-words', action='store_true', default=False, help='Include words invented by fans rather than Tolkien')
+    parser.add_argument('--neo', action='store_true', default=False, help='Assemble Neo-Eldarin lists, including words invented by fans rather than Tolkien')
     parser.add_argument('--individual-names', action='store_true', default=False, help='Include names of individuals and places')
     parser.add_argument('--collective-names', action='store_true', default=False, help='Include names for collective people')
     parser.add_argument('--proper-names', action='store_true', default=False, help='Include proper names')
     parser.add_argument('--phrases', action='store_true', default=False, help='Include phrases')
+    parser.add_argument('--include-deprecated', action='store_true', default=False, help='Include words that Paul Strack has marked as deprecated in neo lists')
     parser.add_argument('--check-for-updates', action='store_true', default=False, help='Forces a re-download of the Eldamo database')
 
     return parser.parse_args()
@@ -73,13 +74,13 @@ def get_languages_to_generate(args):
     if not is_supported:
         raise ValueError(f"Unsupported language: {args.language}")
     
-    if args.neo_words:
+    if args.neo:
         if languages[0] == QUENYA:
             languages.append(NEO_QUENYA)
         elif languages[0] == SINDARIN:
             languages.append(NEO_SINDARIN)
         else:
-            raise ValueError(f"Neo-words are not supported for {languages[0]['name']}")
+            raise ValueError(f"Neo lists are not supported for {languages[0]['name']}")
     return languages
 
 def get_speech_types_to_exclude(args):
@@ -112,7 +113,7 @@ def find_referenced_word(referencer, all_words):
 
 def find_translation(all_words, word, args):
     english_word = None
-    if args.neo_words:
+    if args.neo:
         english_word = word.get('ngloss')
     if english_word == UNGLOSSED:
         english_word = None
@@ -171,6 +172,16 @@ def include_tengwar_info(word):
             word["tolkienian_word"] += f" [{tengwar_info}]"
             del word["tengwar"]
 
+def remove_deprecated_translations(word):
+    if '⚠️' in word["english_word"]:
+        index = word["english_word"].find('⚠️')
+        word["english_word"] = word["english_word"][:index]
+    
+    word["english_word"] = word["english_word"].strip()
+    
+    if word["english_word"].endswith(',') or word["english_word"].endswith(';'):
+        word["english_word"] = word["english_word"][:-1].strip()
+
 def word_to_map(all_words, word, categories, args):
     word_map = {}
     word_map["tolkienian_word"] = word.get('v')
@@ -192,6 +203,8 @@ def word_to_map(all_words, word, categories, args):
         if word_map.get(key) is not None:
             word_map[key] = word_map[key].replace(DELIMITER, "")
 
+    if args.neo and not args.include_deprecated:
+        remove_deprecated_translations(word_map)
     include_tengwar_info(word_map)
 
     return word_map
@@ -283,8 +296,8 @@ def invalidate_word(word):
 def is_contained_in_variants(word, variant):
     if word == variant:
         return False
-    MARKERS = ["*", "?", "⚠️"]
-    MARKER_PATTERN = "[\*\?⚠️]"
+    MARKERS = ["*", "?"]
+    MARKER_PATTERN = "[\*\?]"
     is_variant = "(" in variant and ")" in variant
     has_marker = any(marker in word for marker in MARKERS)
     if not is_variant and not has_marker:
@@ -381,7 +394,7 @@ def format_words(words):
 
 def write_to_file(args, languages, words):
     language_name = languages[0].get("name")
-    if args.neo_words:
+    if args.neo:
         language_name = "Neo-" + language_name
     output_dir = "output"
     if not os.path.exists(output_dir):
@@ -416,6 +429,8 @@ def main(args):
         
         filtered_words = [word for word in words if word.get('l') in language_ids]
         filtered_words = [word for word in filtered_words if word.get('speech') not in speech_types_to_exclude]
+        if args.neo and not args.include_deprecated:
+            filtered_words = [word for word in filtered_words if word.find('deprecated') is None]
         
         print_parts_of_speech(filtered_words)
 

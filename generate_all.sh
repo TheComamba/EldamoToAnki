@@ -10,10 +10,10 @@ python3 generate.py Noldorin
 echo
 python3 generate.py Quenya
 echo
-python3 generate.py Quenya --neo-words
+python3 generate.py Quenya --neo
 echo
 python3 generate.py Sindarin
 echo
-python3 generate.py Sindarin --neo-words
+python3 generate.py Sindarin --neo
 echo
 python3 generate.py Telerin

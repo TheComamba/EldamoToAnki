@@ -6,15 +6,17 @@ Takes the marvellous wordlist from [eldamo.org][eldamo] and converts it into inp
 
 The decks for [Neo-Quenya][neo-quenya] and [Neo-Sindarin][neo-sindarin] based on the lists in this repository can be found on Anki (unless they get deleted because they do not receive enough downloads).
 
-Some lists can be found in the [`output`][output] folder of this repository. They are ready to be imported. They do not include any names or phrases. The lists are:
+Some lists can be found in the [`output`][output] folder of this repository. They are ready to be imported. They do not include any names or phrases. The Neo-Quenya and Neo-Sindarin lists do not include deprecated words.
+
+The lists are:
 - Adunaic (ca. 180 cards)
 - Black Speech (ca. 40 cards)
 - Khuzdul (ca. 40 cards)
 - Noldorin (ca. 1300 cards)
 - Quenya (ca. 2200 cards)
-- Quenya plus Neo-Quenya (ca. 4800 cards)
+- Neo-Quenya (ca. 4400 cards)
 - Sindarin (ca. 1200 cards)
-- Sindarin plus Neo-Sindarin (ca. 2700 cards)
+- Neo-Sindarin (ca. 2500 cards)
 - Telerin (ca. 200 words)
 
 Thanks to the very structured [input data][eldamo-data] curated by [Paul Strack][pfstrack], it is extremely easy to add more languages to that list. Just drop me an issue and I'll do that for you.
@@ -28,11 +30,12 @@ Depending on your Python install, the first command may be `py` or `python` inst
 For the `<language>` argument, type the name of the language, or its id (usually its first letter).
 
 You can add optional arguments:
-- `--neo-words`: Include words invented by fans rather than Tolkien.
+- `--neo`: Assemble Neo-Eldarin lists, including words invented by fans rather than Tolkien.
 - `--individual-names`: Include names of individuals and places.
 - `--collective-names`: Include names for collective people.
 - `--proper-names`: Include proper names.
 - `--phrases`: Include phrases.
+- `--include-deprecated`: Include words that Paul Strack has marked as deprecated in neo lists.
 - `--check-for-updates`: Forces a re-download of the Eldamo database.
 
 You can check out the [`generate_all.sh`][generate_all.sh] script for example usages.
