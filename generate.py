@@ -416,6 +416,8 @@ def main(args):
         
         filtered_words = [word for word in words if word.get('l') in language_ids]
         filtered_words = [word for word in filtered_words if word.get('speech') not in speech_types_to_exclude]
+        if args.neo_words:
+            filtered_words = [word for word in filtered_words if word.find('deprecated') is None]
         
         print_parts_of_speech(filtered_words)
 
