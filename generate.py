@@ -100,8 +100,13 @@ def get_languages_to_generate(args):
             languages.append(NEO_PRIMITIVE)
         elif languages[0] == QUENYA:
             languages.append(NEO_QUENYA)
+            languages.append(MIDDLE_QUENYA)
+            languages.append(EARLY_QUENYA)
         elif languages[0] == SINDARIN:
             languages.append(NEO_SINDARIN)
+            languages.append(NOLDORIN)
+            languages.append(EARLY_NOLDORIN)
+            languages.append(GNOMISH)
         else:
             raise ValueError(f"Neo lists are not supported for {languages[0]['name']}")
     return languages
