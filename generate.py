@@ -59,6 +59,7 @@ def parse_args():
     parser.add_argument('--phrases', action='store_true', default=False, help='Include phrases')
     parser.add_argument('--include-deprecated', action='store_true', default=False, help='Include words that Paul Strack has marked as deprecated in neo lists')
     parser.add_argument('--check-for-updates', action='store_true', default=False, help='Forces a re-download of the Eldamo database')
+    parser.add_argument('--verbose', action='store_true', default=False, help='Print more output')
 
     return parser.parse_args()
 
@@ -214,12 +215,14 @@ def word_to_map(all_words, word, categories, args):
     word_map = {}
     word_map["tolkienian_word"] = word.get('v')
     if word_map.get("tolkienian_word") is None:
-        print("Skipping word without value: ")
-        debug_print_word(word)
+        if args.verbose:
+            print("Skipping word without value: ")
+            debug_print_word(word)
         return None
     word_map["english_word"] = find_translation(all_words, word, args)
     if word_map.get("english_word") is None:
-        print("Skipping word without translation: ", word_map.get("tolkienian_word"))
+        if args.verbose:
+            print("Skipping word without translation: ", word_map.get("tolkienian_word"))
         return None
     word_map["part_of_speech"] = word.get('speech')
     word_map["stem"] = word.get('stem')
@@ -460,12 +463,14 @@ def main(args):
         if args.neo and not args.include_deprecated:
             filtered_words = [word for word in filtered_words if word.find('deprecated') is None]
         
-        print_parts_of_speech(filtered_words)
+        if args.verbose:
+            print_parts_of_speech(filtered_words)
 
         word_maps = words_to_maps(filtered_words, filtered_words, categories, args)
 
         word_maps = remove_duplications(word_maps)
-        print("Collected ", len(word_maps), " cards")
+        if args.verbose:
+            print("Collected ", len(word_maps), " cards")
 
         formatted_words = format_words(word_maps)
 

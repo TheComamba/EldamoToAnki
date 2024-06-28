@@ -43,6 +43,7 @@ You can add optional arguments:
 - `--phrases`: Include phrases.
 - `--include-deprecated`: Include words that Paul Strack has marked as deprecated in neo lists.
 - `--check-for-updates`: Forces a re-download of the Eldamo database.
+- `--verbose`: Print more output.
 
 You can check out the [`generate_all.sh`][generate_all.sh] script for example usages.
 
