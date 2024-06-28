@@ -157,11 +157,6 @@ class TestGenerate(unittest.TestCase):
         deduped = remove_duplicate_translations(words)
         self.assertEqual(deduped, ["bla"])
 
-    def test_remove_duplicate_translations_with_warning_sign(self):
-        words = ["bla", "⚠️bla"]
-        deduped = remove_duplicate_translations(words)
-        self.assertEqual(deduped, ["bla"])
-
     def test_merging_tolkienian_duplicates(self):
         words = [
             {"tolkienian_word": "sívë", "english_word": "knowing"},

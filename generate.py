@@ -284,8 +284,8 @@ def invalidate_word(word):
 def is_contained_in_variants(word, variant):
     if word == variant:
         return False
-    MARKERS = ["*", "?", "⚠️"]
-    MARKER_PATTERN = "[\*\?⚠️]"
+    MARKERS = ["*", "?"]
+    MARKER_PATTERN = "[\*\?]"
     is_variant = "(" in variant and ")" in variant
     has_marker = any(marker in word for marker in MARKERS)
     if not is_variant and not has_marker:
