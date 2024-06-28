@@ -36,6 +36,7 @@ def parse_args():
     parser.add_argument('--collective-names', action='store_true', default=False, help='Include names for collective people')
     parser.add_argument('--proper-names', action='store_true', default=False, help='Include proper names')
     parser.add_argument('--phrases', action='store_true', default=False, help='Include phrases')
+    parser.add_argument('--include-deprecated', action='store_true', default=False, help='Include words that Paul Strack has marked as deprecated in neo lists')
     parser.add_argument('--check-for-updates', action='store_true', default=False, help='Forces a re-download of the Eldamo database')
 
     return parser.parse_args()
@@ -416,7 +417,7 @@ def main(args):
         
         filtered_words = [word for word in words if word.get('l') in language_ids]
         filtered_words = [word for word in filtered_words if word.get('speech') not in speech_types_to_exclude]
-        if args.neo_words:
+        if args.neo_words and not args.include_deprecated:
             filtered_words = [word for word in filtered_words if word.find('deprecated') is None]
         
         print_parts_of_speech(filtered_words)
