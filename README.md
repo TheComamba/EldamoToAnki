@@ -9,17 +9,21 @@ The decks for [Neo-Quenya][neo-quenya] and [Neo-Sindarin][neo-sindarin] based on
 Some lists can be found in the [`output`][output] folder of this repository. They are ready to be imported. They do not include any names or phrases. The Neo-Quenya and Neo-Sindarin lists do not include deprecated words.
 
 The lists are:
-- Adunaic (ca. 180 cards)
-- Black Speech (ca. 40 cards)
-- Khuzdul (ca. 40 cards)
-- Noldorin (ca. 1300 cards)
-- Primitive Elvish (ca. 800 cards)
-- Neo-Primitive Elvish (ca. 800 cards)
-- Quenya (ca. 2200 cards)
-- Neo-Quenya (ca. 4400 cards)
-- Sindarin (ca. 1200 cards)
-- Neo-Sindarin (ca. 2500 cards)
-- Telerin (ca. 200 words)
+- [Adunaic](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Adunaic.txt) (ca. 180 cards)
+- [Black Speech](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Black-Speech.txt) (ca. 40 cards)
+- [Early Noldorin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Early-Noldorin.txt) (ca. 700 cards)
+- [Early Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Early-Quenya.txt) (ca. 3100 cards)
+- [Gnomish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Gnomish.txt) (ca. 2700 cards)
+- [Khuzdul](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Khuzdul.txt) (ca. 40 cards)
+- [Middle Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Middle-Quenya.txt) (ca. 1700 cards)
+- [Noldorin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Noldorin.txt) (ca. 1300 cards)
+- [Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Primitive.txt) (ca. 800 cards)
+- [Neo-Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Primitive.txt) (ca. 800 cards)
+- [Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Quenya.txt) (ca. 2200 cards)
+- [Neo-Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Quenya.txt) (ca. 4400 cards)
+- [Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Sindarin.txt) (ca. 1200 cards)
+- [Neo-Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Sindarin.txt) (ca. 2500 cards)
+- [Telerin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Telerin.txt) (ca. 200 words)
 
 Thanks to the very structured [input data][eldamo-data] curated by [Paul Strack][pfstrack], it is extremely easy to add more languages to that list. Just drop me an issue and I'll do that for you.
 
