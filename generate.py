@@ -172,6 +172,16 @@ def include_tengwar_info(word):
             word["tolkienian_word"] += f" [{tengwar_info}]"
             del word["tengwar"]
 
+def remove_deprecated_translations(word):
+    if '⚠️' in word["english_word"]:
+        index = word["english_word"].find('⚠️')
+        word["english_word"] = word["english_word"][:index]
+    
+    word["english_word"] = word["english_word"].strip()
+    
+    if word["english_word"].endswith(',') or word["english_word"].endswith(';'):
+        word["english_word"] = word["english_word"][:-1].strip()
+
 def word_to_map(all_words, word, categories, args):
     word_map = {}
     word_map["tolkienian_word"] = word.get('v')
@@ -193,6 +203,8 @@ def word_to_map(all_words, word, categories, args):
         if word_map.get(key) is not None:
             word_map[key] = word_map[key].replace(DELIMITER, "")
 
+    if args.neo and not args.include_deprecated:
+        remove_deprecated_translations(word_map)
     include_tengwar_info(word_map)
 
     return word_map
