@@ -15,10 +15,10 @@ if not os.path.exists(new_data_directory):
 
 if not os.path.exists(old_data_file_path):
     print("Anki Export for ", filename, " was not found.")
-    print("Go to the Ank app and klick on 'Browse'.")
-    print("Then click on 'Notes' -> 'Export Notes'.")
-    print("Choose the 'Notes in Plain Text' option, tick the 'Include unique identifier' checkbox, and click 'Export'.")
-    print("Save the file to ", old_data_file_path)
+    print("Go to the Anki app and klick on the gear icon  next to the deck.")
+    print("Then click on 'Export'.")
+    print("Choose the 'Notes in Plain Text' option, tick the 'Include unique identifier' checkbox.")
+    print("click 'Export' and save the file to ", old_data_file_path)
     sys.exit(1)
 
 new_data = []
