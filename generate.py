@@ -33,7 +33,7 @@ UNGLOSSED = "[unglossed]"
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate text files that are easily imported with Anki.')
     parser.add_argument('language', type=str, help='Language to generate')
-    parser.add_argument('--neo', action='store_true', default=False, help='Assemble Neo-Eldarin lists, including words invented by fans rather than Tolkien')
+    parser.add_argument('--neo', action='store_true', default=False, help='Assemble Neo-Eldarin lists, drawing from words invented by Tolkien throughout his life as well as fan-invented words')
     parser.add_argument('--individual-names', action='store_true', default=False, help='Include names of individuals and places')
     parser.add_argument('--collective-names', action='store_true', default=False, help='Include names for collective people')
     parser.add_argument('--proper-names', action='store_true', default=False, help='Include proper names')

@@ -32,7 +32,7 @@ Depending on your Python install, the first command may be `py` or `python` inst
 For the `<language>` argument, type the name of the language, or its id (usually its first letter).
 
 You can add optional arguments:
-- `--neo`: Assemble Neo-Eldarin lists, including words invented by fans rather than Tolkien.
+- `--neo`: Assemble Neo-Eldarin lists, drawing from words invented by Tolkien throughout his life as well as fan-invented words.
 - `--individual-names`: Include names of individuals and places.
 - `--collective-names`: Include names for collective people.
 - `--proper-names`: Include proper names.
@@ -41,6 +41,10 @@ You can add optional arguments:
 - `--check-for-updates`: Forces a re-download of the Eldamo database.
 
 You can check out the [`generate_all.sh`][generate_all.sh] script for example usages.
+
+[Neo-Quenya](https://eldamo.org/content/language-pages/lang-nq.html) draws from words from (Late) Quenya, Middle Quenya, Early Quenya, and fan inventions.
+
+[Neo-Sindarin](https://eldamo.org/content/word-indexes/words-ns.html?neo) draws from words from Sindarin, Noldorin, Early Noldorin, Gnomish, and fan inventions.
 
 # Design Decisions
 
