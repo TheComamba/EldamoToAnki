@@ -339,7 +339,7 @@ def remove_duplicate_translations(words):
     deduped = words.copy()
     for word in words:
         for variant in words:
-            if is_contained_in_variants(word, variant):
+            if is_contained_in_variants(word, variant) and word in deduped:
                 deduped.remove(word)
     deduped = list(set(deduped))
     return deduped
