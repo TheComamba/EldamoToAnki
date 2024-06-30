@@ -192,6 +192,14 @@ def include_tengwar_info_for_quenya(word):
         del word["tengwar"]
         return
        
+def remove_origin_marker(word):
+    for language in SUPPORTED_LANGUAGES:
+        marker = language.get('marker')
+        if marker is not None:
+            full_marker = f"[{marker}.] "
+            word["english_word"] = word["english_word"].replace(full_marker, "")
+            full_marker = f"[{marker}.]"
+            word["english_word"] = word["english_word"].replace(full_marker, "")
 
 def include_tengwar_info(word):
     if is_quenya(word):
@@ -202,14 +210,20 @@ def include_tengwar_info(word):
             word["tolkienian_word"] += f" [{tengwar_info}]"
             del word["tengwar"]
 
-def remove_origin_marker(word):
-    for language in SUPPORTED_LANGUAGES:
-        marker = language.get('marker')
-        if marker is not None:
-            full_marker = f"[{marker}.] "
-            word["english_word"] = word["english_word"].replace(full_marker, "")
-            full_marker = f"[{marker}.]"
-            word["english_word"] = word["english_word"].replace(full_marker, "")
+def normalise_quenya_spelling(word):
+    patterns = [
+        (r'kw', 'qu'),
+        (r'Kw', 'Qu'),
+        (r'ks', 'x'),
+        (r'Ks', 'X'),
+        (r'k(?![ws])', 'c'),
+        (r'K(?![ws])', 'C'),
+        (r'q(?![u])', 'qu'),
+        (r'Q(?![u])', 'Qu')
+    ]
+    for pattern in patterns:
+        if re.search(pattern[0], word["tolkienian_word"]):
+            word["tolkienian_word"] = re.sub(pattern[0], pattern[1], word["tolkienian_word"])
 
 def remove_deprecated_translations(word):
     if '⚠️' in word["english_word"]:
@@ -249,6 +263,8 @@ def word_to_map(all_words, word, categories, args):
             remove_deprecated_translations(word_map)
         if not args.include_origin:
             remove_origin_marker(word_map)
+    if is_quenya(word_map):
+        normalise_quenya_spelling(word_map)
     include_tengwar_info(word_map)
 
     return word_map
