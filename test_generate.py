@@ -1,5 +1,5 @@
 import unittest
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_origin_marker
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, normalise_quenya_spelling, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_origin_marker
 
 class TestGenerate(unittest.TestCase):
     def test_include_tengwar_info(self):
@@ -79,6 +79,15 @@ class TestGenerate(unittest.TestCase):
         word = {"tolkienian_word": "curu", "english_word": "skill; [ᴱQ.] magic, wizardry"}
         remove_origin_marker(word)
         self.assertEqual(word["english_word"], "skill; magic, wizardry")
+
+    def test_normalise_quenya_spelling(self):
+        word = {"language": "q", "tolkienian_word": "aksa akwa aka aqa aqua"}
+        normalise_quenya_spelling(word)
+        self.assertEqual(word["tolkienian_word"], "axa aqua aca aqua aqua")
+
+        word = {"language": "q", "tolkienian_word": "Ksa Kwa Ka Qa Qua"}
+        normalise_quenya_spelling(word)
+        self.assertEqual(word["tolkienian_word"], "Xa Qua Ca Qua Qua")
 
     def test_words_are_tolkienian_duplicates(self):
         word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
