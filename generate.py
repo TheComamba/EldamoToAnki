@@ -362,12 +362,42 @@ def is_contained_in_variants(word, variant):
         return False
     MARKERS = ["*", "?"]
     MARKER_PATTERN = "[\*\?]"
+    DIACRITIC_REPLACEMENTS = [
+        ("â", "á"),
+        ("Â", "Á"),
+        ("ê", "é"),
+        ("Ê", "É"),
+        ("î", "í"),
+        ("Î", "Í"),
+        ("ô", "ó"),
+        ("Ô", "Ó"),
+        ("û", "ú"),
+        ("Û", "Ú"),
+        ("ŷ", "ý"),
+        ("Ŷ", "Ý"),
+        ("ä", "a"),
+        ("Ä", "A"),
+        ("ë", "e"),
+        ("Ë", "E"),
+        ("ï", "i"),
+        ("Ï", "I"),
+        ("ö", "o"),
+        ("Ö", "O"),
+        ("ü", "u"),
+        ("Ü", "U"),
+        ("ÿ", "y"),
+        ("Ÿ", "Y")
+    ]
     is_variant = "(" in variant and ")" in variant
     has_marker = any(marker in word for marker in MARKERS)
-    if not is_variant and not has_marker:
+    has_diacritic = any(diacritic[0] in variant for diacritic in DIACRITIC_REPLACEMENTS)
+    if not is_variant and not has_marker and not has_diacritic:
         return False
-    longer_variant = variant.replace("(", "").replace(")", "")
-    shorter_variant = re.sub(r'\(.*?\)', '', variant)
+    variant_with_less_diacritics = variant
+    for diacritic in DIACRITIC_REPLACEMENTS:
+        variant_with_less_diacritics = variant_with_less_diacritics.replace(diacritic[0], diacritic[1])
+    longer_variant = variant_with_less_diacritics.replace("(", "").replace(")", "")
+    shorter_variant = re.sub(r'\(.*?\)', '', variant_with_less_diacritics)
     word_without_markers = re.sub(MARKER_PATTERN, '', word)
     return word_without_markers == longer_variant or word_without_markers == shorter_variant
 
@@ -378,6 +408,7 @@ def remove_duplicate_translations(words):
             if is_contained_in_variants(word, variant) and word in deduped:
                 deduped.remove(word)
     deduped = list(set(deduped))
+    deduped.sort()
     return deduped
 
 def merge_duplicates(duplicates, field_to_merge):
