@@ -180,6 +180,104 @@ class TestGenerate(unittest.TestCase):
         deduped = remove_duplicate_translations(words)
         self.assertEqual(deduped, ["bla"])
 
+    def test_remove_duplicate_translations_with_accent(self):
+        words = ["â", "á", "a"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["â", "a"])
+
+        words = ["Â", "Á", "A"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["Â", "A"])
+
+        words = ["ê", "é", "e"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["ê", "e"])
+
+        words = ["Ê", "É", "E"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["Ê", "E"])
+
+        words = ["î", "í", "i"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["î", "i"])
+
+        words = ["Î", "Í", "I"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["Î", "I"])
+
+        words = ["ô", "ó", "o"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["ô", "o"])
+
+        words = ["Ô", "Ó", "O"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["Ô", "O"])
+
+        words = ["û", "ú", "u"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["û", "u"])
+
+        words = ["Û", "Ú", "U"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["Û", "U"])
+
+        words = ["ŷ", "ý", "y"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["ŷ", "y"])
+
+        words = ["Ŷ", "Ý", "Y"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["Ŷ", "Y"])
+
+    def test_remove_duplicate_translations_with_trema(self):
+        words = ["ä", "a"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["a"])
+
+        words = ["Ä", "A"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["A"])
+
+        words = ["ë", "e"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["e"])
+
+        words = ["Ë", "E"]
+        deduped = remove_deprecated_translations(words)
+        self.assertEqual(deduped, ["E"])
+
+        words = ["ï", "i"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["i"])
+
+        words = ["Ï", "I"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["I"])
+
+        words = ["ö", "o"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["o"])
+
+        words = ["Ö", "O"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["O"])
+
+        words = ["ü", "u"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["u"])
+
+        words = ["Ü", "U"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["U"])
+
+        words = ["ÿ", "y"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["y"])
+
+        words = ["Ÿ", "Y"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["Y"])
+
     def test_merging_tolkienian_duplicates(self):
         words = [
             {"tolkienian_word": "sívë", "english_word": "knowing"},
