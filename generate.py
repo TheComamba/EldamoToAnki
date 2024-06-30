@@ -393,11 +393,11 @@ def is_contained_in_variants(word, variant):
     has_diacritic = any(diacritic[0] in variant for diacritic in DIACRITIC_REPLACEMENTS)
     if not is_variant and not has_marker and not has_diacritic:
         return False
-    variant_with_less_diacritics = variant
     for diacritic in DIACRITIC_REPLACEMENTS:
-        variant_with_less_diacritics = variant_with_less_diacritics.replace(diacritic[0], diacritic[1])
-    longer_variant = variant_with_less_diacritics.replace("(", "").replace(")", "")
-    shorter_variant = re.sub(r'\(.*?\)', '', variant_with_less_diacritics)
+        word = word.replace(diacritic[0], diacritic[1])
+        variant = variant.replace(diacritic[0], diacritic[1])
+    longer_variant = variant.replace("(", "").replace(")", "")
+    shorter_variant = re.sub(r'\(.*?\)', '', variant)
     word_without_markers = re.sub(MARKER_PATTERN, '', word)
     return word_without_markers == longer_variant or word_without_markers == shorter_variant
 

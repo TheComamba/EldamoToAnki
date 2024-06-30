@@ -243,7 +243,7 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(deduped, ["ë"])
 
         words = ["Ë", "E"]
-        deduped = remove_deprecated_translations(words)
+        deduped = remove_duplicate_translations(words)
         self.assertEqual(deduped, ["Ë"])
 
         words = ["ï", "i"]
@@ -277,6 +277,11 @@ class TestGenerate(unittest.TestCase):
         words = ["Ÿ", "Y"]
         deduped = remove_duplicate_translations(words)
         self.assertEqual(deduped, ["Ÿ"])
+
+    def test_remove_more_duplicate_translations(self):
+        words = ["l(h)ô", "lô"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["l(h)ô"])
 
     def test_merging_tolkienian_duplicates(self):
         words = [
