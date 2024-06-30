@@ -166,7 +166,11 @@ def get_category(word, categories):
     return None
 
 def is_quenya(word):
-    return word.get('language') == QUENYA.get('id') or word.get('language') == NEO_QUENYA.get('id')
+    is_eq = word.get('language') == EARLY_QUENYA.get('id')
+    is_mq = word.get('language') == MIDDLE_QUENYA.get('id')
+    is_q = word.get('language') == QUENYA.get('id')
+    is_nq = word.get('language') == NEO_QUENYA.get('id')
+    return is_eq or is_mq or is_q or is_nq
 
 def include_tengwar_info_for_quenya(word):
     if "þ" in word["tolkienian_word"]:
@@ -192,6 +196,14 @@ def include_tengwar_info_for_quenya(word):
         del word["tengwar"]
         return
        
+def remove_origin_marker(word):
+    for language in SUPPORTED_LANGUAGES:
+        marker = language.get('marker')
+        if marker is not None:
+            full_marker = f"[{marker}.] "
+            word["english_word"] = word["english_word"].replace(full_marker, "")
+            full_marker = f"[{marker}.]"
+            word["english_word"] = word["english_word"].replace(full_marker, "")
 
 def include_tengwar_info(word):
     if is_quenya(word):
@@ -202,14 +214,20 @@ def include_tengwar_info(word):
             word["tolkienian_word"] += f" [{tengwar_info}]"
             del word["tengwar"]
 
-def remove_origin_marker(word):
-    for language in SUPPORTED_LANGUAGES:
-        marker = language.get('marker')
-        if marker is not None:
-            full_marker = f"[{marker}.] "
-            word["english_word"] = word["english_word"].replace(full_marker, "")
-            full_marker = f"[{marker}.]"
-            word["english_word"] = word["english_word"].replace(full_marker, "")
+def normalise_quenya_spelling(word):
+    patterns = [
+        (r'kw', 'qu'),
+        (r'Kw', 'Qu'),
+        (r'ks', 'x'),
+        (r'Ks', 'X'),
+        (r'k(?![ws])', 'c'),
+        (r'K(?![ws])', 'C'),
+        (r'q(?![u])', 'qu'),
+        (r'Q(?![u])', 'Qu')
+    ]
+    for pattern in patterns:
+        if re.search(pattern[0], word["tolkienian_word"]):
+            word["tolkienian_word"] = re.sub(pattern[0], pattern[1], word["tolkienian_word"])
 
 def remove_deprecated_translations(word):
     if '⚠️' in word["english_word"]:
@@ -249,6 +267,8 @@ def word_to_map(all_words, word, categories, args):
             remove_deprecated_translations(word_map)
         if not args.include_origin:
             remove_origin_marker(word_map)
+    if is_quenya(word_map):
+        normalise_quenya_spelling(word_map)
     include_tengwar_info(word_map)
 
     return word_map
@@ -342,10 +362,40 @@ def is_contained_in_variants(word, variant):
         return False
     MARKERS = ["*", "?"]
     MARKER_PATTERN = "[\*\?]"
+    DIACRITIC_REPLACEMENTS = [
+        ("â", "á"),
+        ("Â", "Á"),
+        ("ê", "é"),
+        ("Ê", "É"),
+        ("î", "í"),
+        ("Î", "Í"),
+        ("ô", "ó"),
+        ("Ô", "Ó"),
+        ("û", "ú"),
+        ("Û", "Ú"),
+        ("ŷ", "ý"),
+        ("Ŷ", "Ý"),
+        ("ä", "a"),
+        ("Ä", "A"),
+        ("ë", "e"),
+        ("Ë", "E"),
+        ("ï", "i"),
+        ("Ï", "I"),
+        ("ö", "o"),
+        ("Ö", "O"),
+        ("ü", "u"),
+        ("Ü", "U"),
+        ("ÿ", "y"),
+        ("Ÿ", "Y")
+    ]
     is_variant = "(" in variant and ")" in variant
     has_marker = any(marker in word for marker in MARKERS)
-    if not is_variant and not has_marker:
+    has_diacritic = any(diacritic[0] in variant for diacritic in DIACRITIC_REPLACEMENTS)
+    if not is_variant and not has_marker and not has_diacritic:
         return False
+    for diacritic in DIACRITIC_REPLACEMENTS:
+        word = word.replace(diacritic[0], diacritic[1])
+        variant = variant.replace(diacritic[0], diacritic[1])
     longer_variant = variant.replace("(", "").replace(")", "")
     shorter_variant = re.sub(r'\(.*?\)', '', variant)
     word_without_markers = re.sub(MARKER_PATTERN, '', word)
@@ -358,6 +408,7 @@ def remove_duplicate_translations(words):
             if is_contained_in_variants(word, variant) and word in deduped:
                 deduped.remove(word)
     deduped = list(set(deduped))
+    deduped.sort()
     return deduped
 
 def merge_duplicates(duplicates, field_to_merge):
