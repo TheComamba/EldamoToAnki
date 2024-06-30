@@ -166,7 +166,11 @@ def get_category(word, categories):
     return None
 
 def is_quenya(word):
-    return word.get('language') == QUENYA.get('id') or word.get('language') == NEO_QUENYA.get('id')
+    is_eq = word.get('language') == EARLY_QUENYA.get('id')
+    is_mq = word.get('language') == MIDDLE_QUENYA.get('id')
+    is_q = word.get('language') == QUENYA.get('id')
+    is_nq = word.get('language') == NEO_QUENYA.get('id')
+    return is_eq or is_mq or is_q or is_nq
 
 def include_tengwar_info_for_quenya(word):
     if "þ" in word["tolkienian_word"]:
