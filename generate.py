@@ -273,12 +273,22 @@ def word_to_map(all_words, word, categories, args):
 
     return word_map
 
+def split_word_map(word_map):
+    maps = []
+    english_words = re.split(r',|;', word_map["english_word"])
+    for english_word in english_words:
+        new_map = copy.deepcopy(word_map)
+        new_map["english_word"] = english_word.strip()
+        maps.append(new_map)
+    return maps
+
 def words_to_maps(words, categories, args):
     word_maps = []
     for word in words:
         word_map = word_to_map(words, word, categories, args)
         if word_map is not None:
-            word_maps.append(word_map)
+            split_maps = split_word_map(word_map)
+            word_maps.extend(split_maps)
     return word_maps
 
 def remove_duplication_marker(word):
