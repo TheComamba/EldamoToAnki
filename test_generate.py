@@ -355,6 +355,13 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(maps[2]["english_word"], "as")
         self.assertEqual(maps[2]["test"], "test")
 
+    def test_verbs_with_several_translations_get_to_prepended(self):
+        words = {"tolkienian_word": "gwathra", "english_word": "to dim, obscure", "part_of_speech": "vb"}
+        maps = split_word_map(words)
+        self.assertEqual(len(maps), 2)
+        self.assertEqual(maps[0]["english_word"], "to dim")
+        self.assertEqual(maps[1]["english_word"], "to obscure")
+
     def test_words_with_several_translations_are_split_at_comma_or_semicolon(self):
         words = [
             {"v": "sívë", "gloss": "knowing, peace; as"},

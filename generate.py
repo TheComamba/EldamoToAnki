@@ -278,7 +278,10 @@ def split_word_map(word_map):
     english_words = re.split(r',|;', word_map["english_word"])
     for english_word in english_words:
         new_map = copy.deepcopy(word_map)
-        new_map["english_word"] = english_word.strip()
+        english_word = english_word.strip()
+        if word_map.get("part_of_speech") == "vb" and not english_word.startswith("to "):
+            english_word = "to " + english_word
+        new_map["english_word"] = english_word
         maps.append(new_map)
     return maps
 
