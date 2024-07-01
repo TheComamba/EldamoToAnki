@@ -273,10 +273,10 @@ def word_to_map(all_words, word, categories, args):
 
     return word_map
 
-def words_to_maps(all_words, words, categories, args):
+def words_to_maps(words, categories, args):
     word_maps = []
     for word in words:
-        word_map = word_to_map(all_words, word, categories, args)
+        word_map = word_to_map(words, word, categories, args)
         if word_map is not None:
             word_maps.append(word_map)
     return word_maps
@@ -520,7 +520,7 @@ def main(args):
         if args.verbose:
             print_parts_of_speech(filtered_words)
 
-        word_maps = words_to_maps(filtered_words, filtered_words, categories, args)
+        word_maps = words_to_maps(filtered_words, categories, args)
 
         word_maps = remove_duplications(word_maps)
         if args.verbose:

@@ -1,5 +1,6 @@
 import unittest
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, normalise_quenya_spelling, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_origin_marker
+from types import SimpleNamespace
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, normalise_quenya_spelling, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_origin_marker, words_to_maps
 
 class TestGenerate(unittest.TestCase):
     def test_include_tengwar_info(self):
@@ -342,6 +343,21 @@ class TestGenerate(unittest.TestCase):
         make_tolkienian_duplicates_unique(words)
         self.assertNotIn("extra_info", words[0])
         self.assertNotIn("extra_info", words[1])
+    
+    def test_words_with_several_translations_are_split(self):
+        words = [
+            {"tolkienian_word": "sívë", "english_word": "knowing; peace; as", "test": "test"},
+        ]
+        categories = []
+        args = SimpleNamespace(verbose=False)
+        maps = words_to_maps(words, categories, args)
+        self.assertEqual(len(maps), 3)
+        self.assertEqual(maps[0]["english_word"], "knowing")
+        self.assertEqual(maps[0]["test"], "test")
+        self.assertEqual(maps[1]["english_word"], "peace")
+        self.assertEqual(maps[1]["test"], "test")
+        self.assertEqual(maps[2]["english_word"], "as")
+        self.assertEqual(maps[2]["test"], "test")
 
     def test_formatting_simple_word(self):
         word = {"tolkienian_word": "hîr", "english_word": "lord"}
