@@ -290,7 +290,7 @@ class TestGenerate(unittest.TestCase):
             {"tolkienian_word": "sívë", "english_word": "as"},
         ]
         merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) as; (2) knowing; (3) peace")
+        self.assertEqual(words[0]["english_word"], "as; knowing; peace")
         self.assertIsNone(words[1]["english_word"])
         self.assertIsNone(words[2]["english_word"])
 
@@ -321,7 +321,7 @@ class TestGenerate(unittest.TestCase):
             {"tolkienian_word": "test", "english_word": "yes"},
         ]
         merge_duplicates(words, "tolkienian_word")
-        self.assertEqual(words[0]["tolkienian_word"], "(1) (a)lá; (2) test")
+        self.assertEqual(words[0]["tolkienian_word"], "(a)lá; test")
         self.assertIsNone(words[1]["tolkienian_word"])
         self.assertIsNone(words[2]["tolkienian_word"])
 

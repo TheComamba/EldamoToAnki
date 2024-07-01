@@ -416,17 +416,7 @@ def merge_duplicates(duplicates, field_to_merge):
     values_to_merge = remove_duplicate_translations(values_to_merge)
     values_to_merge.sort()
 
-    merged_values = ""
-    
-    if len(values_to_merge) == 1:
-        merged_values = values_to_merge[0]
-    else:
-        counter = 1
-        for value in values_to_merge:
-            if counter > 1:
-                merged_values += "; "
-            merged_values += f"({counter}) {value}"
-            counter += 1
+    merged_values = "; ".join(values_to_merge)
     
     for i in range(0, len(duplicates)):
         if i == 0:
