@@ -223,7 +223,20 @@ def normalise_quenya_spelling(word):
         (r'k(?![ws])', 'c'),
         (r'K(?![ws])', 'C'),
         (r'q(?![u])', 'qu'),
-        (r'Q(?![u])', 'Qu')
+        (r'Q(?![u])', 'Qu'),
+        (r'e$', 'ë'),
+        (r'ea', 'ëa'),
+        (r'eo', 'ëo'),
+        (r'oa', 'öa'),
+        (r'Ea', 'Ëa'),
+        (r'Eo', 'Ëo'),
+        (r'Oa', 'Öa'),
+        (r'eä', 'ëa'),
+        (r'eö', 'ëo'),
+        (r'oä', 'öa'),
+        (r'Eä', 'Ëa'),
+        (r'Eö', 'Ëo'),
+        (r'Oä', 'Öa'),
     ]
     for pattern in patterns:
         if re.search(pattern[0], word["tolkienian_word"]):

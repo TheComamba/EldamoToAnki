@@ -90,6 +90,18 @@ class TestGenerate(unittest.TestCase):
         normalise_quenya_spelling(word)
         self.assertEqual(word["tolkienian_word"], "Xa Qua Ca Qua Qua")
 
+        word = {"language": "q", "tolkienian_word": "(e)vilye"}
+        normalise_quenya_spelling(word)
+        self.assertEqual(word["tolkienian_word"], "(e)vilyë")
+
+        word = {"language": "q", "tolkienian_word": "ea eo oa Ea Eo Oa"}
+        normalise_quenya_spelling(word)
+        self.assertEqual(word["tolkienian_word"], "ëa ëo öa Ëa Ëo Öa")
+
+        word = {"language": "q", "tolkienian_word": "eä eö oä Eä Eö Oä"}
+        normalise_quenya_spelling(word)
+        self.assertEqual(word["tolkienian_word"], "ëa ëo öa Ëa Ëo Öa")
+
     def test_words_are_tolkienian_duplicates(self):
         word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
 
