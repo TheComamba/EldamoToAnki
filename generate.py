@@ -223,7 +223,20 @@ def normalise_quenya_spelling(word):
         (r'k(?![ws])', 'c'),
         (r'K(?![ws])', 'C'),
         (r'q(?![u])', 'qu'),
-        (r'Q(?![u])', 'Qu')
+        (r'Q(?![u])', 'Qu'),
+        (r'e$', 'ë'),
+        (r'ea', 'ëa'),
+        (r'eo', 'ëo'),
+        (r'oa', 'öa'),
+        (r'Ea', 'Ëa'),
+        (r'Eo', 'Ëo'),
+        (r'Oa', 'Öa'),
+        (r'eä', 'ëa'),
+        (r'eö', 'ëo'),
+        (r'oä', 'öa'),
+        (r'Eä', 'Ëa'),
+        (r'Eö', 'Ëo'),
+        (r'Oä', 'Öa'),
     ]
     for pattern in patterns:
         if re.search(pattern[0], word["tolkienian_word"]):
@@ -273,12 +286,31 @@ def word_to_map(all_words, word, categories, args):
 
     return word_map
 
-def words_to_maps(all_words, words, categories, args):
+def split_word_map(word_map):
+    maps = []
+    english_words = re.split(r',|;', word_map["english_word"])
+    for english_word in english_words:
+        new_map = copy.deepcopy(word_map)
+        english_word = english_word.strip()
+        if needs_added_to(word_map, english_word):
+            english_word = "to " + english_word
+        new_map["english_word"] = english_word
+        maps.append(new_map)
+    return maps
+
+def needs_added_to(word_map, english_word):
+    if not word_map.get("part_of_speech") == "vb":
+        return False
+    return not bool(re.match(r"^(?:[^a-zA-Z]?to )", english_word))
+    
+
+def words_to_maps(words, categories, args):
     word_maps = []
     for word in words:
-        word_map = word_to_map(all_words, word, categories, args)
+        word_map = word_to_map(words, word, categories, args)
         if word_map is not None:
-            word_maps.append(word_map)
+            split_maps = split_word_map(word_map)
+            word_maps.extend(split_maps)
     return word_maps
 
 def remove_duplication_marker(word):
@@ -416,17 +448,7 @@ def merge_duplicates(duplicates, field_to_merge):
     values_to_merge = remove_duplicate_translations(values_to_merge)
     values_to_merge.sort()
 
-    merged_values = ""
-    
-    if len(values_to_merge) == 1:
-        merged_values = values_to_merge[0]
-    else:
-        counter = 1
-        for value in values_to_merge:
-            if counter > 1:
-                merged_values += "; "
-            merged_values += f"({counter}) {value}"
-            counter += 1
+    merged_values = "; ".join(values_to_merge)
     
     for i in range(0, len(duplicates)):
         if i == 0:
@@ -530,7 +552,7 @@ def main(args):
         if args.verbose:
             print_parts_of_speech(filtered_words)
 
-        word_maps = words_to_maps(filtered_words, filtered_words, categories, args)
+        word_maps = words_to_maps(filtered_words, categories, args)
 
         word_maps = remove_duplications(word_maps)
         if args.verbose:

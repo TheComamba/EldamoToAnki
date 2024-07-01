@@ -20,7 +20,7 @@ The lists are:
 - [Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Primitive.txt) (ca. 800 cards)
 - [Neo-Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Primitive.txt) (ca. 800 cards)
 - [Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Quenya.txt) (ca. 2200 cards)
-- [Neo-Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Quenya.txt) (ca. 6400 cards)
+- [Neo-Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Quenya.txt) (ca. 6100 cards)
 - [Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Sindarin.txt) (ca. 1200 cards)
 - [Neo-Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Sindarin.txt) (ca. 4200 cards)
 - [Telerin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Telerin.txt) (ca. 200 words)
@@ -78,17 +78,17 @@ If this does not suffice to make the words unique, and if a category is provided
 
 Finally, if this doesn't help as well, the translations are merged into one:
 
-> hyarna|(1) compact, [ᴹQ.] compressed; (2) southern (adj)
+> hyarna|compact, compressed; southern (adj)
 
 This last step is also true for English words with several Tolkienian translations:
 
-> (1) artatúrë; (2) ohérë|government (n)
+> artatúrë; ohérë|government (n)
 
 Some Tolkienian words are listed with variant versions. The script recognises this and treats them as a single word, so the inputs `lá` and `(a)lá` are listed as one:
 
 > (a)lá|yes (interj)
 
-Some English translations are prepended with the marker `*`, `?` or `⚠️`, denoting some uncertainty. These markers are retained, unless the word is listed more than once, and at least one translation does not have this marker:
+Some English translations are prepended with the marker `*` or `?`, denoting some uncertainty. These markers are retained, unless the word is listed more than once, and at least one translation does not have this marker:
 
 > canya-|?to command (vb)
 

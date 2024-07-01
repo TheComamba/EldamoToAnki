@@ -1,5 +1,6 @@
 import unittest
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, normalise_quenya_spelling, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_origin_marker
+from types import SimpleNamespace
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, normalise_quenya_spelling, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_origin_marker, split_word_map, words_to_maps
 
 class TestGenerate(unittest.TestCase):
     def test_include_tengwar_info(self):
@@ -88,6 +89,18 @@ class TestGenerate(unittest.TestCase):
         word = {"language": "q", "tolkienian_word": "Ksa Kwa Ka Qa Qua"}
         normalise_quenya_spelling(word)
         self.assertEqual(word["tolkienian_word"], "Xa Qua Ca Qua Qua")
+
+        word = {"language": "q", "tolkienian_word": "(e)vilye"}
+        normalise_quenya_spelling(word)
+        self.assertEqual(word["tolkienian_word"], "(e)vilyë")
+
+        word = {"language": "q", "tolkienian_word": "ea eo oa Ea Eo Oa"}
+        normalise_quenya_spelling(word)
+        self.assertEqual(word["tolkienian_word"], "ëa ëo öa Ëa Ëo Öa")
+
+        word = {"language": "q", "tolkienian_word": "eä eö oä Eä Eö Oä"}
+        normalise_quenya_spelling(word)
+        self.assertEqual(word["tolkienian_word"], "ëa ëo öa Ëa Ëo Öa")
 
     def test_words_are_tolkienian_duplicates(self):
         word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
@@ -290,7 +303,7 @@ class TestGenerate(unittest.TestCase):
             {"tolkienian_word": "sívë", "english_word": "as"},
         ]
         merge_duplicates(words, "english_word")
-        self.assertEqual(words[0]["english_word"], "(1) as; (2) knowing; (3) peace")
+        self.assertEqual(words[0]["english_word"], "as; knowing; peace")
         self.assertIsNone(words[1]["english_word"])
         self.assertIsNone(words[2]["english_word"])
 
@@ -321,7 +334,7 @@ class TestGenerate(unittest.TestCase):
             {"tolkienian_word": "test", "english_word": "yes"},
         ]
         merge_duplicates(words, "tolkienian_word")
-        self.assertEqual(words[0]["tolkienian_word"], "(1) (a)lá; (2) test")
+        self.assertEqual(words[0]["tolkienian_word"], "(a)lá; test")
         self.assertIsNone(words[1]["tolkienian_word"])
         self.assertIsNone(words[2]["tolkienian_word"])
 
@@ -342,6 +355,44 @@ class TestGenerate(unittest.TestCase):
         make_tolkienian_duplicates_unique(words)
         self.assertNotIn("extra_info", words[0])
         self.assertNotIn("extra_info", words[1])
+    
+    def test_words_with_several_translations_are_split_at_comma_or_semicolon(self):
+        words = {"tolkienian_word": "sívë", "english_word": "knowing, peace; as", "test": "test"}
+        maps = split_word_map(words)
+        self.assertEqual(len(maps), 3)
+        self.assertEqual(maps[0]["english_word"], "knowing")
+        self.assertEqual(maps[0]["test"], "test")
+        self.assertEqual(maps[1]["english_word"], "peace")
+        self.assertEqual(maps[1]["test"], "test")
+        self.assertEqual(maps[2]["english_word"], "as")
+        self.assertEqual(maps[2]["test"], "test")
+
+    def test_verbs_with_several_translations_get_to_prepended(self):
+        words = {"tolkienian_word": "gwathra", "english_word": "to dim, obscure", "part_of_speech": "vb"}
+        maps = split_word_map(words)
+        self.assertEqual(len(maps), 2)
+        self.assertEqual(maps[0]["english_word"], "to dim")
+        self.assertEqual(maps[1]["english_word"], "to obscure")
+
+    def test_to_prepending_respects_markers(self):
+        words = {"tolkienian_word": "bla", "english_word": "to be, *to not be, €to something", "part_of_speech": "vb"}
+        maps = split_word_map(words)
+        self.assertEqual(len(maps), 3)
+        self.assertEqual(maps[0]["english_word"], "to be")
+        self.assertEqual(maps[1]["english_word"], "*to not be")
+        self.assertEqual(maps[2]["english_word"], "€to something")
+
+    def test_words_with_several_translations_are_split_at_comma_or_semicolon(self):
+        words = [
+            {"v": "sívë", "gloss": "knowing, peace; as"},
+        ]
+        categories = []
+        args = SimpleNamespace(verbose=False, neo=False)
+        maps = words_to_maps(words, categories, args)
+        self.assertEqual(len(maps), 3)
+        self.assertEqual(maps[0]["english_word"], "knowing")
+        self.assertEqual(maps[1]["english_word"], "peace")
+        self.assertEqual(maps[2]["english_word"], "as")
 
     def test_formatting_simple_word(self):
         word = {"tolkienian_word": "hîr", "english_word": "lord"}
