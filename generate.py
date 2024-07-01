@@ -279,11 +279,17 @@ def split_word_map(word_map):
     for english_word in english_words:
         new_map = copy.deepcopy(word_map)
         english_word = english_word.strip()
-        if word_map.get("part_of_speech") == "vb" and not english_word.startswith("to "):
+        if needs_added_to(word_map, english_word):
             english_word = "to " + english_word
         new_map["english_word"] = english_word
         maps.append(new_map)
     return maps
+
+def needs_added_to(word_map, english_word):
+    if not word_map.get("part_of_speech") == "vb":
+        return False
+    return not bool(re.match(r"^(?:[^a-zA-Z]?to )", english_word))
+    
 
 def words_to_maps(words, categories, args):
     word_maps = []
