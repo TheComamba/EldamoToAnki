@@ -84,6 +84,8 @@ This last step is also true for English words with several Tolkienian translatio
 
 > artatúrë; ohérë|government (n)
 
+TODO: This is done first now.
+
 Some Tolkienian words are listed with variant versions. The script recognises this and treats them as a single word, so the inputs `lá` and `(a)lá` are listed as one:
 
 > (a)lá|yes (interj)
@@ -99,6 +101,8 @@ Several words are provided with additional information on the spelling in Tengwa
 > nairë [ñ-]|space (as a physical dimension) (n)
 
 ## Special Tengwar Treatment for Quenya
+
+TODO: Adjusting trema spelling.
 
 The list also contains some archaïc words which still incorporate the old spelling. To reduce duplicated information, the script recognises these and derives the Tengwar annotations. Since this treatment needs to happen on a per language and per sound basis, it is currently implemented only for my personal use-case (Neo-)Quenya. The relevant linguistic information is taken from the [Eldamo Quenya course](https://eldamo.org/intro-quenya/eldamo-intro-quenya-03.html#c3-1-2).
 

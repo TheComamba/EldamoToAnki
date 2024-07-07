@@ -517,12 +517,12 @@ def remove_duplications(all_words):
     for word in all_words:
         if word.get("tolkienian_word") is None:
             continue
-        tolkienian_duplicates = find_tolkienian_duplicates(all_words, word)
-        if len(tolkienian_duplicates) > 1:
-            make_tolkienian_duplicates_unique(tolkienian_duplicates)
         english_duplicates = find_english_duplicates(all_words, word)
         if len(english_duplicates) > 1:
             merge_duplicates(english_duplicates, "tolkienian_word")
+        tolkienian_duplicates = find_tolkienian_duplicates(all_words, word)
+        if len(tolkienian_duplicates) > 1:
+            make_tolkienian_duplicates_unique(tolkienian_duplicates)
     all_words = [word for word in all_words if word.get("tolkienian_word") is not None]
     return all_words
 
