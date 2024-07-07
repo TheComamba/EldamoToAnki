@@ -424,6 +424,7 @@ def invalidate_word(word):
 def is_contained_in_variants(word, variant):
     if word == variant:
         return False
+
     MARKERS = ["*", "?"]
     MARKER_PATTERN = "[\*\?]"
     DIACRITIC_REPLACEMENTS = [
@@ -455,8 +456,15 @@ def is_contained_in_variants(word, variant):
     is_variant = "(" in variant and ")" in variant
     has_marker = any(marker in word for marker in MARKERS)
     has_diacritic = any(diacritic[0] in variant for diacritic in DIACRITIC_REPLACEMENTS)
-    if not is_variant and not has_marker and not has_diacritic:
+    wordContainsUppercase = word != word.lower()
+    variantContainsUppercase = variant != variant.lower()
+    casingIsDifferent = wordContainsUppercase != variantContainsUppercase
+    if not is_variant and not has_marker and not has_diacritic and not casingIsDifferent:
         return False
+    
+    if casingIsDifferent:
+        variant = variant.lower()
+
     for diacritic in DIACRITIC_REPLACEMENTS:
         word = word.replace(diacritic[0], diacritic[1])
         variant = variant.replace(diacritic[0], diacritic[1])

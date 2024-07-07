@@ -283,6 +283,11 @@ class TestGenerate(unittest.TestCase):
         deduped = remove_duplicate_translations(words)
         self.assertEqual(deduped, ["Ÿ"])
 
+    def test_remove_case_insensitive_duplicate_translations(self):
+        words = ["autumn", "Autumn"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["Autumn"])
+
     def test_remove_more_duplicate_translations(self):
         words = ["l(h)ô", "lô"]
         deduped = remove_duplicate_translations(words)
