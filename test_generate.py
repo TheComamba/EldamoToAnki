@@ -385,12 +385,19 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(maps[1]["english_word"], "to obscure")
 
     def test_to_prepending_respects_markers(self):
-        words = {"tolkienian_word": "bla", "english_word": "to be, *to not be, €to something", "part_of_speech": "vb"}
+        words = {"tolkienian_word": "bla", "english_word": "to be, *to not be, €to something, (lit.) to verily exist", "part_of_speech": "vb"}
         maps = split_word_map(words)
-        self.assertEqual(len(maps), 3)
+        self.assertEqual(len(maps), 4)
         self.assertEqual(maps[0]["english_word"], "to be")
         self.assertEqual(maps[1]["english_word"], "*to not be")
         self.assertEqual(maps[2]["english_word"], "€to something")
+        self.assertEqual(maps[3]["english_word"], "(lit.) to verily exist")
+
+    def test_to_prepending_preserves_lit_at_front(self):
+        words = {"tolkienian_word": "bla", "english_word": "(lit.) bla", "part_of_speech": "vb"}
+        maps = split_word_map(words)
+        self.assertEqual(len(maps), 1)
+        self.assertEqual(maps[0]["english_word"], "(lit.) to bla")
 
     def test_words_are_only_split_outside_parenthesis(self):
         words = {"tolkienian_word": "cólima", "english_word": "bearable, light (of burdens and things comparable, troubles, labors, afflications)"}

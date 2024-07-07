@@ -328,6 +328,7 @@ def split_word_map(word_map):
         english_word = english_word.strip()
         if needs_added_to(word_map, english_word):
             english_word = "to " + english_word
+            english_word = english_word.replace("to (lit.)", "(lit.) to")
         new_map["english_word"] = english_word
         maps.append(new_map)
     return maps
@@ -335,7 +336,14 @@ def split_word_map(word_map):
 def needs_added_to(word_map, english_word):
     if not word_map.get("part_of_speech") == "vb":
         return False
-    return not bool(re.match(r"^(?:[^a-zA-Z]?to )", english_word))
+    if english_word.startswith("to "):
+        return False
+    starts_with_non_alphanumeric_and_then_to = bool(re.match(r"^(?:[^a-zA-Z]?to )", english_word))
+    if starts_with_non_alphanumeric_and_then_to:
+        return False
+    if english_word.startswith("(lit.) to"):
+        return False
+    return True
     
 
 def words_to_maps(words, categories, args):
