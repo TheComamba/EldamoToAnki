@@ -288,10 +288,15 @@ class TestGenerate(unittest.TestCase):
         deduped = remove_duplicate_translations(words)
         self.assertEqual(deduped, ["Autumn"])
 
-    def test_remove_more_duplicate_translations(self):
+    def test_remove_parenthesis_duplicate_translations(self):
         words = ["l(h)ô", "lô"]
         deduped = remove_duplicate_translations(words)
         self.assertEqual(deduped, ["l(h)ô"])
+
+    def test_remove_parenthesis_and_space_duplicate_translations(self):
+        words = ["end", "(the) end"]
+        deduped = remove_duplicate_translations(words)
+        self.assertEqual(deduped, ["(the) end"])
 
     def test_merging_tolkienian_duplicates(self):
         words = [
