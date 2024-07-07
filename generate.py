@@ -265,6 +265,7 @@ def word_to_map(all_words, word, categories, args):
         if args.verbose:
             print("Skipping word without translation: ", word_map.get("tolkienian_word"))
         return None
+    word_map["english_word"] = word_map["english_word"].replace("&", "and")
     word_map["part_of_speech"] = word.get('speech')
     word_map["stem"] = word.get('stem')
     word_map["category"] = get_category(word, categories)
@@ -286,9 +287,31 @@ def word_to_map(all_words, word, categories, args):
 
     return word_map
 
+def split_string_outside_parenthesis(string):
+    parts = []
+    temp = ""
+    depth = 0
+
+    for char in string:
+        if char in "([{":
+            depth += 1
+        elif char in ")]}":
+            depth -= 1
+        elif char in ",;" and depth == 0:
+            if temp:
+                parts.append(temp)
+                temp = ""
+            continue
+        temp += char
+
+    if temp:
+        parts.append(temp)
+
+    return parts
+
 def split_word_map(word_map):
     maps = []
-    english_words = re.split(r',|;', word_map["english_word"])
+    english_words = split_string_outside_parenthesis(word_map["english_word"])
     for english_word in english_words:
         new_map = copy.deepcopy(word_map)
         english_word = english_word.strip()

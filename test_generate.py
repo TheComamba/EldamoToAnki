@@ -382,6 +382,19 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(maps[1]["english_word"], "*to not be")
         self.assertEqual(maps[2]["english_word"], "€to something")
 
+    def test_words_are_only_split_outside_parenthesis(self):
+        words = {"tolkienian_word": "cólima", "english_word": "bearable, light (of burdens and things comparable, troubles, labors, afflications)"}
+        maps = split_word_map(words)
+        self.assertEqual(len(maps), 2)
+        self.assertEqual(maps[0]["english_word"], "bearable")
+        self.assertEqual(maps[1]["english_word"], "light (of burdens and things comparable, troubles, labors, afflications)")
+
+        words = {"tolkienian_word": "test", "english_word": "test1, test2 [test3, test4]"}
+        maps = split_word_map(words)
+        self.assertEqual(len(maps), 2)
+        self.assertEqual(maps[0]["english_word"], "test1")
+        self.assertEqual(maps[1]["english_word"], "test2 [test3, test4]")
+
     def test_words_with_several_translations_are_split_at_comma_or_semicolon(self):
         words = [
             {"v": "sívë", "gloss": "knowing, peace; as"},
