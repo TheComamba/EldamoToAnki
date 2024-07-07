@@ -94,13 +94,13 @@ class TestGenerate(unittest.TestCase):
         normalise_quenya_spelling(word)
         self.assertEqual(word["tolkienian_word"], "(e)vilyë")
 
-        word = {"language": "q", "tolkienian_word": "ea eo oa Ea Eo Oa"}
+        word = {"language": "q", "tolkienian_word": "ea eo ie oa Ea Eo Ie Oa"}
         normalise_quenya_spelling(word)
-        self.assertEqual(word["tolkienian_word"], "ëa ëo öa Ëa Ëo Öa")
+        self.assertEqual(word["tolkienian_word"], "ëa ëo ië öa Ëa Ëo Ië Öa")
 
-        word = {"language": "q", "tolkienian_word": "eä eö oä Eä Eö Oä"}
+        word = {"language": "q", "tolkienian_word": "eä eö ïe oä Eä Eö Ïe Oä"}
         normalise_quenya_spelling(word)
-        self.assertEqual(word["tolkienian_word"], "ëa ëo öa Ëa Ëo Öa")
+        self.assertEqual(word["tolkienian_word"], "ëa ëo ië öa Ëa Ëo Ië Öa")
 
     def test_words_are_tolkienian_duplicates(self):
         word = {"tolkienian_word": "tolkienian", "english_word": "english", "extra_info": "extra", "part_of_speech": "n"}
@@ -488,7 +488,7 @@ class TestGenerate(unittest.TestCase):
             "imbë (adv)|in(wards) (adv)\n",
             "imbë (n, Physical World)|(wide) ravine; deep vale; deep valley; dell; glen; (lit.) tween-land (n)\n",
             "imbë (prep adv)|among; between (prep adv)\n",
-            "imbë; nieres|hive (n)\n",
+            "imbë; niëres|hive (n)\n",
         ]
 
         self.assertEqual(formatted, expected)
