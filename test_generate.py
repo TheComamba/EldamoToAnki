@@ -1,6 +1,6 @@
 import unittest
 from types import SimpleNamespace
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, normalise_quenya_spelling, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_origin_marker, split_word_map, words_to_maps
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, format_words, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, normalise_quenya_spelling, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_duplications, remove_origin_marker, split_word_map, words_to_maps
 
 class TestGenerate(unittest.TestCase):
     def test_include_tengwar_info(self):
@@ -468,6 +468,30 @@ class TestGenerate(unittest.TestCase):
         args = parse_args()
         args.language = 'sindarin'
         main(args)
+    
+    def test_imbe(self):
+        words = [
+            {"l": "eq", "v": "imbe", "speech": "n", "gloss": "hive", "cat": "AN_BE"},
+            {"l": "q", "v": "imbë¹", "speech": "prep adv", "gloss": "between, among"},
+            {"l": "mq", "v": "imbe¹", "speech": "adv", "gloss": "in(wards)"},
+            {"l": "q", "v": "imbë²", "speech": "n", "ngloss": "deep valley, (wide) ravine, [ᴹQ.] glen, dell, (lit.) tween-land", "cat": "PW_VA"},
+            {"l": "mq", "v": "imbe²", "speech": "n", "gloss": "dell, deep vale, ravine, glen", "cat": "PW_VA"},
+            {"l": "nq", "v": "nieres", "speech": "n", "gloss": "hive"},
+        ]
+        categories = [{"id": "AN", "label": "Animals"}, {"id": "PW", "label": "Physical World"}]
+        args = SimpleNamespace(verbose=False, neo=True, language='quenya', include_deprecated=False, include_origin=False)
+        maps = words_to_maps(words, categories, args)
+        maps = remove_duplications(maps)
+        formatted = format_words(maps)
+
+        expected = [
+            "imbë (adv)|in(wards) (adv)\n",
+            "imbë (n)|(wide) ravine; deep vale; deep valley; dell; glen; (lit.) tween-land (n)\n",
+            "imbë (prep adv)|among; between (prep adv)\n",
+            "imbë; nieres (nieress-); nierwë|hive (n)\n",
+        ]
+
+        self.assertEqual(formatted, expected)
 
 if __name__ == '__main__':
     unittest.main()
