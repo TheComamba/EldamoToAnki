@@ -480,13 +480,12 @@ def remove_duplicate_translations(words):
             if is_contained_in_variants(word, variant) and word in deduped:
                 deduped.remove(word)
     deduped = list(set(deduped))
-    deduped.sort()
+    deduped.sort(key=lambda x: (x.startswith('(lit.)'), x))
     return deduped
 
 def merge_duplicates(duplicates, field_to_merge):
     values_to_merge = [word.get(field_to_merge) for word in duplicates if word.get(field_to_merge) is not None]
     values_to_merge = remove_duplicate_translations(values_to_merge)
-    values_to_merge.sort()
 
     merged_values = "; ".join(values_to_merge)
     

@@ -309,6 +309,14 @@ class TestGenerate(unittest.TestCase):
         self.assertIsNone(words[1]["english_word"])
         self.assertIsNone(words[2]["english_word"])
 
+    def test_lit_is_at_the_end_when_merging_duplicates(self):
+        words = [
+            {"tolkienian_word": "Anarya", "english_word": "Sunday"},
+            {"tolkienian_word": "Anarya", "english_word": "(lit.) Sun-day"},
+        ]
+        merge_duplicates(words, "english_word")
+        self.assertEqual(words[0]["english_word"], "Sunday; (lit.) Sun-day")
+
     def test_merging_tolkienian_true_duplicates(self):
         words = [
             {"tolkienian_word": "cenya", "english_word": "*seeing"},
