@@ -513,17 +513,29 @@ def make_tolkienian_duplicates_unique(duplicates):
     if len(duplicates) > 1:
         merge_duplicates(duplicates, "english_word")
 
+def is_extra_info_necessary(word_with_extra_info, all_words):
+    duplicates = [word for word in all_words if word.get("tolkienian_word") == word_with_extra_info.get("tolkienian_word")]
+    duplicates = [word for word in duplicates if word.get("english_word") != word_with_extra_info.get("english_word")]
+    return len(duplicates) > 0
+
+def remove_unnecessary_extra_info(all_words):
+    for word in all_words:
+        hasExtraInfo = word.get("extra_info") is not None
+        if hasExtraInfo and not is_extra_info_necessary(word, all_words):
+            word["extra_info"] = None
+
 def remove_duplications(all_words):
     for word in all_words:
         if word.get("tolkienian_word") is None:
             continue
-        english_duplicates = find_english_duplicates(all_words, word)
-        if len(english_duplicates) > 1:
-            merge_duplicates(english_duplicates, "tolkienian_word")
         tolkienian_duplicates = find_tolkienian_duplicates(all_words, word)
         if len(tolkienian_duplicates) > 1:
             make_tolkienian_duplicates_unique(tolkienian_duplicates)
+        english_duplicates = find_english_duplicates(all_words, word)
+        if len(english_duplicates) > 1:
+            merge_duplicates(english_duplicates, "tolkienian_word")
     all_words = [word for word in all_words if word.get("tolkienian_word") is not None]
+    remove_unnecessary_extra_info(all_words)
     return all_words
 
 def format_word(word):
