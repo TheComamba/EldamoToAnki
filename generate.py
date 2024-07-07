@@ -205,6 +205,12 @@ def remove_origin_marker(word):
             full_marker = f"[{marker}.]"
             word["english_word"] = word["english_word"].replace(full_marker, "")
 
+def include_stem_info(word):
+    tengwar_info = word.get("stem")
+    if tengwar_info is not None:
+        word["tolkienian_word"] += f" ({tengwar_info})"
+        del word["stem"]
+
 def include_tengwar_info(word):
     if is_quenya(word):
         include_tengwar_info_for_quenya(word)
@@ -220,23 +226,27 @@ def normalise_quenya_spelling(word):
         (r'Kw', 'Qu'),
         (r'ks', 'x'),
         (r'Ks', 'X'),
+        (r'ea', 'ëa'),
+        (r'eo', 'ëo'),
+        (r'ie', 'ië'),
+        (r'oa', 'öa'),
+        (r'Ea', 'Ëa'),
+        (r'Eo', 'Ëo'),
+        (r'Ie', 'Ië'),
+        (r'Oa', 'Öa'),
+        (r'eä', 'ëa'),
+        (r'eö', 'ëo'),
+        (r'ïe', 'ië'),
+        (r'oä', 'öa'),
+        (r'Eä', 'Ëa'),
+        (r'Eö', 'Ëo'),
+        (r'Ïe', 'Ië'),
+        (r'Oä', 'Öa'),
         (r'k(?![ws])', 'c'),
         (r'K(?![ws])', 'C'),
         (r'q(?![u])', 'qu'),
         (r'Q(?![u])', 'Qu'),
-        (r'e$', 'ë'),
-        (r'ea', 'ëa'),
-        (r'eo', 'ëo'),
-        (r'oa', 'öa'),
-        (r'Ea', 'Ëa'),
-        (r'Eo', 'Ëo'),
-        (r'Oa', 'Öa'),
-        (r'eä', 'ëa'),
-        (r'eö', 'ëo'),
-        (r'oä', 'öa'),
-        (r'Eä', 'Ëa'),
-        (r'Eö', 'Ëo'),
-        (r'Oä', 'Öa'),
+        (r'e(?=\s|$)', 'ë'),
     ]
     for pattern in patterns:
         if re.search(pattern[0], word["tolkienian_word"]):
@@ -252,6 +262,18 @@ def remove_deprecated_translations(word):
     if word["english_word"].endswith(',') or word["english_word"].endswith(';'):
         word["english_word"] = word["english_word"][:-1].strip()
 
+def remove_duplication_marker(word):
+    word["tolkienian_word"] = word["tolkienian_word"].replace("¹", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("²", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("³", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁴", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁵", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁶", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁷", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁸", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁹", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁰", "")
+
 def word_to_map(all_words, word, categories, args):
     word_map = {}
     word_map["tolkienian_word"] = word.get('v')
@@ -265,6 +287,7 @@ def word_to_map(all_words, word, categories, args):
         if args.verbose:
             print("Skipping word without translation: ", word_map.get("tolkienian_word"))
         return None
+    word_map["english_word"] = word_map["english_word"].replace("&", "and")
     word_map["part_of_speech"] = word.get('speech')
     word_map["stem"] = word.get('stem')
     word_map["category"] = get_category(word, categories)
@@ -280,20 +303,49 @@ def word_to_map(all_words, word, categories, args):
             remove_deprecated_translations(word_map)
         if not args.include_origin:
             remove_origin_marker(word_map)
+
+    remove_duplication_marker(word_map)
+
+    include_stem_info(word_map)
+    
+    include_tengwar_info(word_map)
+
     if is_quenya(word_map):
         normalise_quenya_spelling(word_map)
-    include_tengwar_info(word_map)
 
     return word_map
 
+def split_string_outside_parenthesis(string):
+    parts = []
+    temp = ""
+    depth = 0
+
+    for char in string:
+        if char in "([{":
+            depth += 1
+        elif char in ")]}":
+            depth -= 1
+        elif char in ",;" and depth == 0:
+            if temp:
+                parts.append(temp)
+                temp = ""
+            continue
+        temp += char
+
+    if temp:
+        parts.append(temp)
+
+    return parts
+
 def split_word_map(word_map):
     maps = []
-    english_words = re.split(r',|;', word_map["english_word"])
+    english_words = split_string_outside_parenthesis(word_map["english_word"])
     for english_word in english_words:
         new_map = copy.deepcopy(word_map)
         english_word = english_word.strip()
         if needs_added_to(word_map, english_word):
             english_word = "to " + english_word
+            english_word = english_word.replace("to (lit.)", "(lit.) to")
         new_map["english_word"] = english_word
         maps.append(new_map)
     return maps
@@ -301,9 +353,15 @@ def split_word_map(word_map):
 def needs_added_to(word_map, english_word):
     if not word_map.get("part_of_speech") == "vb":
         return False
-    return not bool(re.match(r"^(?:[^a-zA-Z]?to )", english_word))
+    if english_word.startswith("to "):
+        return False
+    starts_with_non_alphanumeric_and_then_to = bool(re.match(r"^(?:[^a-zA-Z]?to )", english_word))
+    if starts_with_non_alphanumeric_and_then_to:
+        return False
+    if english_word.startswith("(lit.) to"):
+        return False
+    return True
     
-
 def words_to_maps(words, categories, args):
     word_maps = []
     for word in words:
@@ -312,18 +370,6 @@ def words_to_maps(words, categories, args):
             split_maps = split_word_map(word_map)
             word_maps.extend(split_maps)
     return word_maps
-
-def remove_duplication_marker(word):
-    word["tolkienian_word"] = word["tolkienian_word"].replace("¹", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("²", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("³", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁴", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁵", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁶", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁷", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁸", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁹", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁰", "")
 
 def find_tolkienian_duplicates(all_words, word_input):
     duplicates = []
@@ -336,8 +382,6 @@ def are_tolkienian_duplicates(word1, word2):
     if word1.get("tolkienian_word") is None or word2.get("tolkienian_word") is None:
         return False
     if word1.get("tolkienian_word") != word2.get("tolkienian_word"):
-        return False
-    if word1.get("stem") != word2.get("stem"):
         return False
     if word1.get("extra_info") != word2.get("extra_info"):
         return False
@@ -392,6 +436,7 @@ def invalidate_word(word):
 def is_contained_in_variants(word, variant):
     if word == variant:
         return False
+
     MARKERS = ["*", "?"]
     MARKER_PATTERN = "[\*\?]"
     DIACRITIC_REPLACEMENTS = [
@@ -423,13 +468,20 @@ def is_contained_in_variants(word, variant):
     is_variant = "(" in variant and ")" in variant
     has_marker = any(marker in word for marker in MARKERS)
     has_diacritic = any(diacritic[0] in variant for diacritic in DIACRITIC_REPLACEMENTS)
-    if not is_variant and not has_marker and not has_diacritic:
+    wordContainsUppercase = word != word.lower()
+    variantContainsUppercase = variant != variant.lower()
+    casingIsDifferent = wordContainsUppercase != variantContainsUppercase
+    if not is_variant and not has_marker and not has_diacritic and not casingIsDifferent:
         return False
+    
+    if casingIsDifferent:
+        variant = variant.lower()
+
     for diacritic in DIACRITIC_REPLACEMENTS:
         word = word.replace(diacritic[0], diacritic[1])
         variant = variant.replace(diacritic[0], diacritic[1])
     longer_variant = variant.replace("(", "").replace(")", "")
-    shorter_variant = re.sub(r'\(.*?\)', '', variant)
+    shorter_variant = re.sub(r'\(.*?\)', '', variant).strip()
     word_without_markers = re.sub(MARKER_PATTERN, '', word)
     return word_without_markers == longer_variant or word_without_markers == shorter_variant
 
@@ -440,13 +492,12 @@ def remove_duplicate_translations(words):
             if is_contained_in_variants(word, variant) and word in deduped:
                 deduped.remove(word)
     deduped = list(set(deduped))
-    deduped.sort()
+    deduped.sort(key=lambda x: (x.startswith('(lit.)'), x))
     return deduped
 
 def merge_duplicates(duplicates, field_to_merge):
     values_to_merge = [word.get(field_to_merge) for word in duplicates if word.get(field_to_merge) is not None]
     values_to_merge = remove_duplicate_translations(values_to_merge)
-    values_to_merge.sort()
 
     merged_values = "; ".join(values_to_merge)
     
@@ -465,9 +516,18 @@ def make_tolkienian_duplicates_unique(duplicates):
     if len(duplicates) > 1:
         merge_duplicates(duplicates, "english_word")
 
-def remove_duplications(all_words):
+def is_extra_info_necessary(word_with_extra_info, all_words):
+    duplicates = [word for word in all_words if word.get("tolkienian_word") == word_with_extra_info.get("tolkienian_word")]
+    duplicates = [word for word in duplicates if word.get("english_word") != word_with_extra_info.get("english_word")]
+    return len(duplicates) > 0
+
+def remove_unnecessary_extra_info(all_words):
     for word in all_words:
-        remove_duplication_marker(word)
+        hasExtraInfo = word.get("extra_info") is not None
+        if hasExtraInfo and not is_extra_info_necessary(word, all_words):
+            word["extra_info"] = None
+
+def remove_duplications(all_words):
     for word in all_words:
         if word.get("tolkienian_word") is None:
             continue
@@ -478,18 +538,16 @@ def remove_duplications(all_words):
         if len(english_duplicates) > 1:
             merge_duplicates(english_duplicates, "tolkienian_word")
     all_words = [word for word in all_words if word.get("tolkienian_word") is not None]
+    remove_unnecessary_extra_info(all_words)
     return all_words
 
 def format_word(word):
     tolkienian = word.get("tolkienian_word")
-    stem = word.get("stem")
     extra_info = word.get("extra_info")
     english = word.get("english_word")
     part_of_speech = word.get("part_of_speech")
 
     formatted_word = f"{tolkienian}"
-    if stem is not None:
-        formatted_word += f" ({stem})"
     if extra_info is not None:
         formatted_word += f" ({extra_info})"
     formatted_word += f"{DELIMITER}"

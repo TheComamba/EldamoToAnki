@@ -64,7 +64,24 @@ for guid, front, back in deleted_cards:
     print(guid, "|", front, "|", back)
     old_data.remove((guid, front, back))
 
-has_new_cards = False
+duplicates = []
+for i, (guid, front, back) in enumerate(old_data):
+    for j, (guid2, front2, back2) in enumerate(old_data):
+        if i == j:
+            continue
+        if front == front2 and back == back2:
+            duplicates.append((guid, front, back))
+            break
+
+if len(duplicates) > 0:
+    duplicates.sort(key=lambda x: x[1])
+    print()
+    print("The following duplicates were found:")
+for guid, front, back in duplicates:
+    print(guid, "|", front, "|", back)
+    old_data.remove((guid, front, back))
+
+new_cards = []
 for new_front, new_back in new_data:
     is_new = True
     for guid, front, back in old_data:
@@ -74,12 +91,13 @@ for new_front, new_back in new_data:
             is_new = False
             break
     if is_new:
-        has_new_cards = True
-        break
+        new_cards.append((new_front, new_back))
 
-if has_new_cards:
+if len(new_cards) > 0:
     print()
     print("New cards were added. Please import the file into Anki **after** adjusting the currently stored cards.")
+for front, back in new_cards:
+    print("|", front, "|", back)
 
 with open(old_data_file_path, "w") as old_data_file:
     for line in preamble:
