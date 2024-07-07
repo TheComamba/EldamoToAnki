@@ -100,8 +100,6 @@ Several words are provided with additional information on the spelling in Tengwa
 
 ## Special Treatment for Quenya
 
-TODO: Adjusting trema spelling.
-
 The list also contains some archaïc words which still incorporate the old spelling. To reduce duplicated information, the script recognises these and derives the Tengwar annotations. Since this treatment needs to happen on a per language and per sound basis, it is currently implemented only for my personal use-case (Neo-)Quenya. The relevant linguistic information is taken from the [Eldamo Quenya course](https://eldamo.org/intro-quenya/eldamo-intro-quenya-03.html#c3-1-2).
 
 Any `þ` is replaced with `s`, so `minaþurië` becomes:
