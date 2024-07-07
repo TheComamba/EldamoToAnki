@@ -488,7 +488,7 @@ class TestGenerate(unittest.TestCase):
             "imbë (adv)|in(wards) (adv)\n",
             "imbë (n)|(wide) ravine; deep vale; deep valley; dell; glen; (lit.) tween-land (n)\n",
             "imbë (prep adv)|among; between (prep adv)\n",
-            "imbë; nieres (nieress-); nierwë|hive (n)\n",
+            "imbë; nieres|hive (n)\n",
         ]
 
         self.assertEqual(formatted, expected)

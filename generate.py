@@ -259,6 +259,18 @@ def remove_deprecated_translations(word):
     if word["english_word"].endswith(',') or word["english_word"].endswith(';'):
         word["english_word"] = word["english_word"][:-1].strip()
 
+def remove_duplication_marker(word):
+    word["tolkienian_word"] = word["tolkienian_word"].replace("¹", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("²", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("³", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁴", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁵", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁶", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁷", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁸", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁹", "")
+    word["tolkienian_word"] = word["tolkienian_word"].replace("⁰", "")
+
 def word_to_map(all_words, word, categories, args):
     word_map = {}
     word_map["tolkienian_word"] = word.get('v')
@@ -288,6 +300,8 @@ def word_to_map(all_words, word, categories, args):
             remove_deprecated_translations(word_map)
         if not args.include_origin:
             remove_origin_marker(word_map)
+
+    remove_duplication_marker(word_map)
 
     include_stem_info(word_map)
     
@@ -345,7 +359,6 @@ def needs_added_to(word_map, english_word):
         return False
     return True
     
-
 def words_to_maps(words, categories, args):
     word_maps = []
     for word in words:
@@ -354,18 +367,6 @@ def words_to_maps(words, categories, args):
             split_maps = split_word_map(word_map)
             word_maps.extend(split_maps)
     return word_maps
-
-def remove_duplication_marker(word):
-    word["tolkienian_word"] = word["tolkienian_word"].replace("¹", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("²", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("³", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁴", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁵", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁶", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁷", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁸", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁹", "")
-    word["tolkienian_word"] = word["tolkienian_word"].replace("⁰", "")
 
 def find_tolkienian_duplicates(all_words, word_input):
     duplicates = []
@@ -513,8 +514,6 @@ def make_tolkienian_duplicates_unique(duplicates):
         merge_duplicates(duplicates, "english_word")
 
 def remove_duplications(all_words):
-    for word in all_words:
-        remove_duplication_marker(word)
     for word in all_words:
         if word.get("tolkienian_word") is None:
             continue
