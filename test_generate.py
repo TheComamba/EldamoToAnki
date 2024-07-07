@@ -103,7 +103,7 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(word["tolkienian_word"], "ëa ëo öa Ëa Ëo Öa")
 
     def test_words_are_tolkienian_duplicates(self):
-        word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
+        word = {"tolkienian_word": "tolkienian", "english_word": "english", "extra_info": "extra", "part_of_speech": "n"}
 
         no_tolkienian = word.copy()
         no_tolkienian["tolkienian_word"] = None
@@ -117,10 +117,6 @@ class TestGenerate(unittest.TestCase):
         other_english["english_word"] = "other"
         self.assertTrue(are_tolkienian_duplicates(word, other_english))
 
-        other_stem = word.copy()
-        other_stem["stem"] = "other"
-        self.assertFalse(are_tolkienian_duplicates(word, other_stem))
-
         other_extra = word.copy()
         other_extra["extra_info"] = "other"
         self.assertFalse(are_tolkienian_duplicates(word, other_extra))
@@ -130,7 +126,7 @@ class TestGenerate(unittest.TestCase):
         self.assertTrue(are_tolkienian_duplicates(word, other_pos))
 
     def test_words_are_english_duplicates(self):
-        word = {"tolkienian_word": "tolkienian", "english_word": "english", "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}
+        word = {"tolkienian_word": "tolkienian", "english_word": "english", "extra_info": "extra", "part_of_speech": "n"}
 
         no_english = word.copy()
         no_english["english_word"] = None
@@ -143,10 +139,6 @@ class TestGenerate(unittest.TestCase):
         other_english = word.copy()
         other_english["english_word"] = "other"
         self.assertFalse(are_english_duplicates(word, other_english))
-
-        other_stem = word.copy()
-        other_stem["stem"] = "other"
-        self.assertTrue(are_english_duplicates(word, other_stem))
 
         other_extra = word.copy()
         other_extra["extra_info"] = "other"
@@ -406,16 +398,31 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(maps[0]["english_word"], "knowing")
         self.assertEqual(maps[1]["english_word"], "peace")
         self.assertEqual(maps[2]["english_word"], "as")
+    
+    def test_stem_is_added(self):
+        words = [
+            {"v": "Narquelion", "gloss": "Autumn", "stem": "Narqeliond-"},
+        ]
+        categories = []
+        args = SimpleNamespace(verbose=False, neo=False)
+        maps = words_to_maps(words, categories, args)
+        self.assertEqual(len(maps), 1)
+        self.assertEqual(maps[0]["tolkienian_word"], "Narquelion (Narqeliond-)")
+
+    def test_spelling_is_normalised_also_for_stem(self):
+        words = [
+            {"v": "serke", "gloss": "blood", "stem": "serki-", "l": "q"},
+        ]
+        categories = []
+        args = SimpleNamespace(verbose=False, neo=False)
+        maps = words_to_maps(words, categories, args)
+        self.assertEqual(len(maps), 1)
+        self.assertEqual(maps[0]["tolkienian_word"], "sercë (serci-)")
 
     def test_formatting_simple_word(self):
         word = {"tolkienian_word": "hîr", "english_word": "lord"}
         formatted = format_word(word)
         self.assertEqual(formatted, "hîr|lord\n")
-    
-    def test_formatting_word_with_stem(self):
-        word = {"tolkienian_word": "hîr", "english_word": "lord", "stem": "hîr"}
-        formatted = format_word(word)
-        self.assertEqual(formatted, "hîr (hîr)|lord\n")
     
     def test_formatting_word_with_extra_info(self):
         word = {"tolkienian_word": "hîr", "english_word": "lord", "extra_info": "extra"}
@@ -428,9 +435,9 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(formatted, "hîr|lord (n)\n")
 
     def test_formatting_word_with_all(self):
-        word = {"tolkienian_word": "mísë", "english_word": "grey", "stem": "*mísi-", "extra_info": "extra", "part_of_speech": "adj"}
+        word = {"tolkienian_word": "mísë", "english_word": "grey", "extra_info": "extra", "part_of_speech": "adj"}
         formatted = format_word(word)
-        self.assertEqual(formatted, "mísë (*mísi-) (extra)|grey (adj)\n")
+        self.assertEqual(formatted, "mísë (extra)|grey (adj)\n")
 
     def test_generating_sindarin_does_not_throw(self):
         args = parse_args()

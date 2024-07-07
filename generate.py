@@ -205,6 +205,12 @@ def remove_origin_marker(word):
             full_marker = f"[{marker}.]"
             word["english_word"] = word["english_word"].replace(full_marker, "")
 
+def include_stem_info(word):
+    tengwar_info = word.get("stem")
+    if tengwar_info is not None:
+        word["tolkienian_word"] += f" ({tengwar_info})"
+        del word["stem"]
+
 def include_tengwar_info(word):
     if is_quenya(word):
         include_tengwar_info_for_quenya(word)
@@ -224,7 +230,7 @@ def normalise_quenya_spelling(word):
         (r'K(?![ws])', 'C'),
         (r'q(?![u])', 'qu'),
         (r'Q(?![u])', 'Qu'),
-        (r'e$', 'ë'),
+        (r'e(?=\s|$)', 'ë'),
         (r'ea', 'ëa'),
         (r'eo', 'ëo'),
         (r'oa', 'öa'),
@@ -237,6 +243,7 @@ def normalise_quenya_spelling(word):
         (r'Eä', 'Ëa'),
         (r'Eö', 'Ëo'),
         (r'Oä', 'Öa'),
+        (r'e(?=\s|$)', 'ë'),
     ]
     for pattern in patterns:
         if re.search(pattern[0], word["tolkienian_word"]):
@@ -281,9 +288,13 @@ def word_to_map(all_words, word, categories, args):
             remove_deprecated_translations(word_map)
         if not args.include_origin:
             remove_origin_marker(word_map)
+
+    include_stem_info(word_map)
+    
+    include_tengwar_info(word_map)
+
     if is_quenya(word_map):
         normalise_quenya_spelling(word_map)
-    include_tengwar_info(word_map)
 
     return word_map
 
@@ -359,8 +370,6 @@ def are_tolkienian_duplicates(word1, word2):
     if word1.get("tolkienian_word") is None or word2.get("tolkienian_word") is None:
         return False
     if word1.get("tolkienian_word") != word2.get("tolkienian_word"):
-        return False
-    if word1.get("stem") != word2.get("stem"):
         return False
     if word1.get("extra_info") != word2.get("extra_info"):
         return False
@@ -505,14 +514,11 @@ def remove_duplications(all_words):
 
 def format_word(word):
     tolkienian = word.get("tolkienian_word")
-    stem = word.get("stem")
     extra_info = word.get("extra_info")
     english = word.get("english_word")
     part_of_speech = word.get("part_of_speech")
 
     formatted_word = f"{tolkienian}"
-    if stem is not None:
-        formatted_word += f" ({stem})"
     if extra_info is not None:
         formatted_word += f" ({extra_info})"
     formatted_word += f"{DELIMITER}"
