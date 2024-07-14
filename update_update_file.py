@@ -85,9 +85,7 @@ new_cards = []
 for new_front, new_back in new_data:
     is_new = True
     for guid, front, back in old_data:
-        isSameFront = front == new_front
-        isSameBack = back == new_back
-        if isSameFront and isSameBack:
+        if front == new_front:
             is_new = False
             break
     if is_new:
