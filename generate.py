@@ -588,6 +588,13 @@ def print_parts_of_speech(filtered_words):
     included_speech_values.sort()
     print("Collected cards of the following part of speech types:\n", included_speech_values)
 
+def filtered_words(args, language_ids, speech_types_to_exclude, words):
+    filtered_words = [word for word in words if word.get('l') in language_ids]
+    filtered_words = [word for word in filtered_words if word.get('speech') not in speech_types_to_exclude]
+    if args.neo and not args.include_deprecated:
+        filtered_words = [word for word in filtered_words if word.find('deprecated') is None]
+    return filtered_words
+
 def main(args):
     languages = get_languages_to_generate(args)
     print("Generating cards for the following languages: ", [lang.get("name") for lang in languages])
@@ -602,10 +609,7 @@ def main(args):
 
         words = root.findall(".//word")
         
-        filtered_words = [word for word in words if word.get('l') in language_ids]
-        filtered_words = [word for word in filtered_words if word.get('speech') not in speech_types_to_exclude]
-        if args.neo and not args.include_deprecated:
-            filtered_words = [word for word in filtered_words if word.find('deprecated') is None]
+        filtered_words = filtered_words(args, language_ids, speech_types_to_exclude, words)
         
         if args.verbose:
             print_parts_of_speech(filtered_words)
