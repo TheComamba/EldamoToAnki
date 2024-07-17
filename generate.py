@@ -103,12 +103,9 @@ def get_languages_to_generate(args):
         elif languages[0] == QUENYA:
             languages.append(NEO_QUENYA)
             languages.append(MIDDLE_QUENYA)
-            languages.append(EARLY_QUENYA)
         elif languages[0] == SINDARIN:
             languages.append(NEO_SINDARIN)
             languages.append(NOLDORIN)
-            languages.append(EARLY_NOLDORIN)
-            languages.append(GNOMISH)
         else:
             raise ValueError(f"Neo lists are not supported for {languages[0]['name']}")
     return languages
@@ -588,6 +585,22 @@ def print_parts_of_speech(filtered_words):
     included_speech_values.sort()
     print("Collected cards of the following part of speech types:\n", included_speech_values)
 
+def is_deprecated(word, all_words):
+    if word.find('deprecated') is not None:
+        return True
+    ref = word.find('see')
+    if ref is not None:
+        for word_iter in all_words:
+            if word_iter.get('v') == ref.get('v') and word_iter.get('l') == ref.get('l'):
+                return is_deprecated(word_iter, all_words)
+
+def filtered_words(args, language_ids, speech_types_to_exclude, words):
+    filtered = [word for word in words if word.get('l') in language_ids]
+    if args.neo and not args.include_deprecated:
+        filtered = [word for word in filtered if not is_deprecated(word, filtered)]
+    filtered = [word for word in filtered if word.get('speech') not in speech_types_to_exclude]
+    return filtered
+
 def main(args):
     languages = get_languages_to_generate(args)
     print("Generating cards for the following languages: ", [lang.get("name") for lang in languages])
@@ -602,15 +615,12 @@ def main(args):
 
         words = root.findall(".//word")
         
-        filtered_words = [word for word in words if word.get('l') in language_ids]
-        filtered_words = [word for word in filtered_words if word.get('speech') not in speech_types_to_exclude]
-        if args.neo and not args.include_deprecated:
-            filtered_words = [word for word in filtered_words if word.find('deprecated') is None]
+        filtered = filtered_words(args, language_ids, speech_types_to_exclude, words)
         
         if args.verbose:
-            print_parts_of_speech(filtered_words)
+            print_parts_of_speech(filtered)
 
-        word_maps = words_to_maps(filtered_words, categories, args)
+        word_maps = words_to_maps(filtered, categories, args)
 
         word_maps = remove_duplications(word_maps)
         if args.verbose:

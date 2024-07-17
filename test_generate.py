@@ -1,6 +1,25 @@
 import unittest
 from types import SimpleNamespace
-from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, format_word, format_words, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, normalise_quenya_spelling, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_duplications, remove_origin_marker, split_word_map, words_to_maps
+import xml.etree.ElementTree as ET
+from generate import add_uniqueness_via_field, are_english_duplicates, are_tolkienian_duplicates, filtered_words, format_word, format_words, include_tengwar_info, make_tolkienian_duplicates_unique, merge_duplicates, normalise_quenya_spelling, parse_args, remove_deprecated_translations, remove_duplicate_translations, main, remove_duplications, remove_origin_marker, split_word_map, words_to_maps
+
+def dict_to_xml(tag, d):
+    elem = ET.Element(tag)
+    for key, val in d.items():
+        if isinstance(val, dict):
+            elem.append(dict_to_xml(key, val))
+        elif isinstance(val, list):
+            for subdict in val:
+                elem.append(dict_to_xml(key, subdict))
+        else:
+            elem.set(key, str(val))
+    return elem
+
+def list_to_xml(list):
+    root = ET.Element("words")
+    for d in list:
+        root.append(dict_to_xml("word", d))
+    return ET.ElementTree(root)
 
 class TestGenerate(unittest.TestCase):
     def test_include_tengwar_info(self):
@@ -480,6 +499,8 @@ class TestGenerate(unittest.TestCase):
         ]
         categories = [{"id": "AN", "label": "Animals"}, {"id": "PW", "label": "Physical World"}]
         args = SimpleNamespace(verbose=False, neo=True, language='quenya', include_deprecated=False, include_origin=False)
+        root = list_to_xml(words)
+        words = root.findall(".//word")
         maps = words_to_maps(words, categories, args)
         maps = remove_duplications(maps)
         formatted = format_words(maps)
@@ -489,6 +510,65 @@ class TestGenerate(unittest.TestCase):
             "imbë (n, Physical World)|(wide) ravine; deep vale; deep valley; dell; glen; (lit.) tween-land (n)\n",
             "imbë (prep adv)|among; between (prep adv)\n",
             "imbë; niëres|hive (n)\n",
+        ]
+
+        self.assertEqual(formatted, expected)
+    
+    def test_one_ninth(self):
+        root = ET.Element("words")
+        huestya = dict_to_xml("word", {
+            "l": "eq", "v": "huest(y)a", "speech": "adj", "gloss": "one ninth", 
+                "deprecated": {
+                    "l": "q", "v": "ne(re)sta"
+                    }
+            })
+        huetya = dict_to_xml("word", {
+            "l": "eq", "v": "huetya", "speech": "adj", "gloss": "one ninth",
+                "see": {
+                        "l": "eq", "v": "huest(y)a"
+                        }
+            })
+        huestya.append(huetya)
+        neresta = dict_to_xml("word", {
+            "l": "q", "v": "ne(re)sta", "speech": "fraction", "gloss": "one ninth"
+            })
+        huesto = dict_to_xml("word", {
+            "l": "eq", "v": "huesto", "speech": "fraction", "gloss": "one ninth",
+                    "deprecated": {
+                            "l": "q", "v": "ne(re)sta"
+                                }
+        })
+        huetto = dict_to_xml("word", {
+            "l": "eq", "v": "huetto", "speech": "fraction", "gloss": "one ninth",
+                "see": {
+                        "l": "eq", "v": "huesto"
+                    }
+        })
+        huesto.append(huetto)
+        neresta.append(huesto)
+        nersat = dict_to_xml("word", {
+            "l": "q", "v": "nersat", "speech": "fraction", "gloss": "one ninth",
+                    "deprecated": {
+                            "l": "q", "v": "ne(re)sta"
+                            }
+        })
+        neresta.append(nersat)
+        root.append(huestya)
+        root.append(neresta)
+
+        words = root.findall(".//word")
+        self.assertEqual(len(words), 6)
+
+        args = SimpleNamespace(verbose=False, neo=True, language='quenya', include_deprecated=False, include_origin=False)
+        language_ids = ["eq", "mq", "q", "nq"]
+        speech_types_to_exclude = []
+        categories = []
+        filtered = filtered_words(args, language_ids, speech_types_to_exclude, words)
+        maps = words_to_maps(filtered, categories, args)
+        formatted = format_words(maps)
+
+        expected = [
+            "ne(re)sta|one ninth (fraction)\n"
         ]
 
         self.assertEqual(formatted, expected)
