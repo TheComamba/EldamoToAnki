@@ -482,6 +482,14 @@ def is_contained_in_variants(word, variant):
     word_without_markers = re.sub(MARKER_PATTERN, '', word)
     return word_without_markers == longer_variant or word_without_markers == shorter_variant
 
+def translations_sorter(x):
+    SORTED_MARKERS = ['!', '*', '?', '†', '(lit.)']
+    primary_sorting_criterium = 0
+    for (index, marker) in enumerate(SORTED_MARKERS):
+        if marker in x:
+            primary_sorting_criterium = index + 1
+    return (primary_sorting_criterium, x)
+
 def remove_duplicate_translations(words):
     deduped = words.copy()
     for word in words:
@@ -489,7 +497,7 @@ def remove_duplicate_translations(words):
             if is_contained_in_variants(word, variant) and word in deduped:
                 deduped.remove(word)
     deduped = list(set(deduped))
-    deduped.sort(key=lambda x: (x.startswith('(lit.)'), x))
+    deduped.sort(key=translations_sorter)
     return deduped
 
 def merge_duplicates(duplicates, field_to_merge):

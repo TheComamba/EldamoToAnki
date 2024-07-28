@@ -336,6 +336,15 @@ class TestGenerate(unittest.TestCase):
         merge_duplicates(words, "english_word")
         self.assertEqual(words[0]["english_word"], "Sunday; (lit.) Sun-day")
 
+    def test_non_alphabeticals_are_at_the_end_when_merging_duplicates(self):
+        words = [
+            {"tolkienian_word": "Anarya", "english_word": "(lit.) ice-drop"},
+            {"tolkienian_word": "Anarya", "english_word": "*icicle"},
+            {"tolkienian_word": "Anarya", "english_word": "icy-ice-ice"},
+        ]
+        merge_duplicates(words, "english_word")
+        self.assertEqual(words[0]["english_word"], "icy-ice-ice; *icicle; (lit.) ice-drop")
+
     def test_merging_tolkienian_true_duplicates(self):
         words = [
             {"tolkienian_word": "cenya", "english_word": "*seeing"},
