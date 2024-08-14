@@ -6,6 +6,8 @@ Takes the marvellous wordlist from [eldamo.org][eldamo] and converts it into inp
 
 The decks for [Neo-Quenya][neo-quenya] and [Neo-Sindarin][neo-sindarin] based on the lists in this repository can be found on Anki (unless they get deleted because they do not receive enough downloads).
 
+Sadly, the update algorithm of Anki is suboptimal. When I share a new version, your version is not synchronised with it. Instead, you'll have to manually delete some cards specified under `update_instructions`, and import the corresponding file from anki_exports.
+
 Some lists can be found in the [`output`][output] folder of this repository. They are ready to be imported. They do not include any names or phrases. The Neo-Quenya and Neo-Sindarin lists do not include deprecated words.
 
 The lists are:
@@ -20,7 +22,7 @@ The lists are:
 - [Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Primitive.txt) (ca. 800 cards)
 - [Neo-Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Primitive.txt) (ca. 800 cards)
 - [Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Quenya.txt) (ca. 2200 cards)
-- [Neo-Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Quenya.txt) (ca. 5300 cards)
+- [Neo-Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Quenya.txt) (ca. 5400 cards)
 - [Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Sindarin.txt) (ca. 1200 cards)
 - [Neo-Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Sindarin.txt) (ca. 3100 cards)
 - [Telerin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Telerin.txt) (ca. 200 words)
@@ -133,7 +135,7 @@ The latin transcription of Quenya words changed throughout Tolkiens life. The sc
 
 # Acknowledgments
 
-Almost all the credit here goes to [Paul Strack][pfstrack], maintainer of the [Eldamo website][eldamo] and [database][eldamo-data]. They gathered all canonical Tolkienian words in one place, collected thousands of fan-made extensions, and organise it all in the structured xml format. Finding this database made writing this script pure bliss.
+Almost all the credit here goes to [Paul Strack][pfstrack], maintainer of the [Eldamo website][eldamo] and [database][eldamo-data]. They gathered all canonical Tolkienian words in one place, collected thousands of fan-made extensions, and organised it all in the structured xml format. Finding this database made writing this script pure bliss.
 
 [eldamo]: https://eldamo.org/
 [eldamo-data]: https://github.com/pfstrack/eldamo/tree/master/src/data
