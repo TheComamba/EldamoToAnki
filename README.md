@@ -6,6 +6,8 @@ Takes the marvellous wordlist from [eldamo.org][eldamo] and converts it into inp
 
 The decks for [Neo-Quenya][neo-quenya] and [Neo-Sindarin][neo-sindarin] based on the lists in this repository can be found on Anki (unless they get deleted because they do not receive enough downloads).
 
+Sadly, the update algorithm of Anki is suboptimal. When I share a new version, your version is not synchronised with it. Instead, you'll have to manually delete some cards specified under `update_instructions`, and import the corresponding file from anki_exports.
+
 Some lists can be found in the [`output`][output] folder of this repository. They are ready to be imported. They do not include any names or phrases. The Neo-Quenya and Neo-Sindarin lists do not include deprecated words.
 
 The lists are:
@@ -133,7 +135,7 @@ The latin transcription of Quenya words changed throughout Tolkiens life. The sc
 
 # Acknowledgments
 
-Almost all the credit here goes to [Paul Strack][pfstrack], maintainer of the [Eldamo website][eldamo] and [database][eldamo-data]. They gathered all canonical Tolkienian words in one place, collected thousands of fan-made extensions, and organise it all in the structured xml format. Finding this database made writing this script pure bliss.
+Almost all the credit here goes to [Paul Strack][pfstrack], maintainer of the [Eldamo website][eldamo] and [database][eldamo-data]. They gathered all canonical Tolkienian words in one place, collected thousands of fan-made extensions, and organised it all in the structured xml format. Finding this database made writing this script pure bliss.
 
 [eldamo]: https://eldamo.org/
 [eldamo-data]: https://github.com/pfstrack/eldamo/tree/master/src/data
