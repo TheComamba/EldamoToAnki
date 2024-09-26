@@ -336,6 +336,14 @@ class TestGenerate(unittest.TestCase):
         merge_duplicates(words, "english_word")
         self.assertEqual(words[0]["english_word"], "Sunday; (lit.) Sun-day")
 
+    def test_orig_is_at_the_end_when_merging_duplicates(self):
+        words = [
+            {"tolkienian_word": "Anarya", "english_word": "Sunday"},
+            {"tolkienian_word": "Anarya", "english_word": "(orig.) Sun-day"},
+        ]
+        merge_duplicates(words, "english_word")
+        self.assertEqual(words[0]["english_word"], "Sunday; (orig.) Sun-day")
+
     def test_non_alphabeticals_are_at_the_end_when_merging_duplicates(self):
         words = [
             {"tolkienian_word": "Anarya", "english_word": "(lit.) ice-drop"},
@@ -426,6 +434,12 @@ class TestGenerate(unittest.TestCase):
         maps = split_word_map(words)
         self.assertEqual(len(maps), 1)
         self.assertEqual(maps[0]["english_word"], "(lit.) to bla")
+
+    def test_to_prepending_preserves_orig_at_front(self):
+        words = {"tolkienian_word": "bla", "english_word": "(orig.) bla", "part_of_speech": "vb"}
+        maps = split_word_map(words)
+        self.assertEqual(len(maps), 1)
+        self.assertEqual(maps[0]["english_word"], "(orig.) to bla")
 
     def test_words_are_only_split_outside_parenthesis(self):
         words = {"tolkienian_word": "cólima", "english_word": "bearable, light (of burdens and things comparable, troubles, labors, afflications)"}

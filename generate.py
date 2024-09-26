@@ -343,6 +343,7 @@ def split_word_map(word_map):
         if needs_added_to(word_map, english_word):
             english_word = "to " + english_word
             english_word = english_word.replace("to (lit.)", "(lit.) to")
+            english_word = english_word.replace("to (orig.)", "(orig.) to")
         new_map["english_word"] = english_word
         maps.append(new_map)
     return maps
@@ -356,6 +357,8 @@ def needs_added_to(word_map, english_word):
     if starts_with_non_alphanumeric_and_then_to:
         return False
     if english_word.startswith("(lit.) to"):
+        return False
+    if english_word.startswith("(orig.) to"):
         return False
     return True
     
@@ -483,7 +486,7 @@ def is_contained_in_variants(word, variant):
     return word_without_markers == longer_variant or word_without_markers == shorter_variant
 
 def translations_sorter(x):
-    SORTED_MARKERS = ['!', '*', '?', '†', '(lit.)']
+    SORTED_MARKERS = ['!', '*', '?', '†', '(lit.)', '(orig.)']
     primary_sorting_criterium = 0
     for (index, marker) in enumerate(SORTED_MARKERS):
         if marker in x:
