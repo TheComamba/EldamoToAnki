@@ -385,11 +385,16 @@ def find_tolkienian_duplicates(all_words, word_input):
 def are_tolkienian_duplicates(word1, word2):
     if word1.get("tolkienian_word") is None or word2.get("tolkienian_word") is None:
         return False
-    if word1.get("tolkienian_word") != word2.get("tolkienian_word"):
-        return False
     if word1.get("extra_info") != word2.get("extra_info"):
         return False
-    return True
+    tw1 = word1.get("tolkienian_word")
+    tw2 = word2.get("tolkienian_word")
+    if tw1 == tw2:
+        return True
+    elif is_contained_in_variants(tw1, tw2) or is_contained_in_variants(tw2, tw1):
+        return True
+    else:
+        return False
 
 def find_english_duplicates(all_words, word_input):
     duplicates = []
@@ -401,11 +406,16 @@ def find_english_duplicates(all_words, word_input):
 def are_english_duplicates(word1, word2):
     if word1.get("english_word") is None or word2.get("english_word") is None:
         return False
-    if word1.get("english_word") != word2.get("english_word"):
-        return False
     if word1.get("part_of_speech") != word2.get("part_of_speech"):
         return False
-    return True
+    ew1 = word1.get("english_word")
+    ew2 = word2.get("english_word")
+    if ew1 == ew2:
+        return True
+    elif is_contained_in_variants(ew1, ew2) or is_contained_in_variants(ew2, ew1):
+        return True
+    else:
+        return False
 
 def is_field_same_for_all(duplicates, field):
     for word in duplicates:
