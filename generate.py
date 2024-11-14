@@ -491,12 +491,18 @@ def is_contained_in_variants(word, variant):
     if casingIsDifferent:
         variant = variant.lower()
 
-    for diacritic in DIACRITIC_REPLACEMENTS:
-        word = word.replace(diacritic[0], diacritic[1])
-        variant = variant.replace(diacritic[0], diacritic[1])
-    longer_variant = variant.replace("(", "").replace(")", "")
-    shorter_variant = re.sub(r'\(.*?\)', '', variant)
-    word_without_markers = re.sub(MARKER_PATTERN, '', word)
+    if has_diacritic:
+        for diacritic in DIACRITIC_REPLACEMENTS:
+            word = word.replace(diacritic[0], diacritic[1])
+            variant = variant.replace(diacritic[0], diacritic[1])
+    
+    if is_variant:
+        longer_variant = variant.replace("(", "").replace(")", "")
+        shorter_variant = re.sub(r'\(.*?\)', '', variant)
+    
+    if has_marker:
+        word_without_markers = re.sub(MARKER_PATTERN, '', word)
+
     return word_without_markers == longer_variant or word_without_markers == shorter_variant
 
 def translations_sorter(x):
