@@ -391,8 +391,6 @@ def are_tolkienian_duplicates(word1, word2):
     tw2 = word2.get("tolkienian_word")
     if tw1 == tw2:
         return True
-    elif is_contained_in_variants(tw1, tw2) or is_contained_in_variants(tw2, tw1):
-        return True
     else:
         return False
 
@@ -410,9 +408,11 @@ def are_english_duplicates(word1, word2):
         return False
     ew1 = word1.get("english_word")
     ew2 = word2.get("english_word")
+    UNCERTAINTY_MARKERS = ["*", "?"]
+    for marker in UNCERTAINTY_MARKERS:
+        ew1 = ew1.replace(marker, "")
+        ew2 = ew2.replace(marker, "")
     if ew1 == ew2:
-        return True
-    elif is_contained_in_variants(ew1, ew2) or is_contained_in_variants(ew2, ew1):
         return True
     else:
         return False
