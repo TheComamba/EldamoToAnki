@@ -429,6 +429,22 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(maps[2]["english_word"], "€to something")
         self.assertEqual(maps[3]["english_word"], "(lit.) to verily exist")
 
+    def test_to_is_not_prepended_for_defective_verbs(self):
+        words = {"tolkienian_word": "bla", "english_word": "can, could, may, might, must, ought, quoth, said, says, shall, should, would", "part_of_speech": "vb"}
+        maps = split_word_map(words)
+        self.assertEqual(maps[0]["english_word"], "can")
+        self.assertEqual(maps[1]["english_word"], "could")
+        self.assertEqual(maps[2]["english_word"], "may")
+        self.assertEqual(maps[3]["english_word"], "might")
+        self.assertEqual(maps[4]["english_word"], "must")
+        self.assertEqual(maps[5]["english_word"], "ought")
+        self.assertEqual(maps[6]["english_word"], "quoth")
+        self.assertEqual(maps[7]["english_word"], "said")
+        self.assertEqual(maps[8]["english_word"], "says")
+        self.assertEqual(maps[9]["english_word"], "shall")
+        self.assertEqual(maps[10]["english_word"], "should")
+        self.assertEqual(maps[11]["english_word"], "would")
+
     def test_to_prepending_preserves_lit_at_front(self):
         words = {"tolkienian_word": "bla", "english_word": "(lit.) bla", "part_of_speech": "vb"}
         maps = split_word_map(words)
