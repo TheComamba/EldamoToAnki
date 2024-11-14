@@ -166,6 +166,11 @@ class TestGenerate(unittest.TestCase):
         other_pos = word.copy()
         other_pos["part_of_speech"] = "other"
         self.assertFalse(are_english_duplicates(word, other_pos))
+
+        english_variant = word.copy()
+        english_variant["tolkienian_word"] = "other"
+        english_variant["english_word"] = "*" + word["english_word"]
+        self.assertTrue(are_english_duplicates(word, english_variant))
     
     def test_invalid_words_are_not_duplicates(self):
         word = {"tolkienian_word": None, "english_word": None, "stem": "stem", "extra_info": "extra", "part_of_speech": "n"}

@@ -385,11 +385,14 @@ def find_tolkienian_duplicates(all_words, word_input):
 def are_tolkienian_duplicates(word1, word2):
     if word1.get("tolkienian_word") is None or word2.get("tolkienian_word") is None:
         return False
-    if word1.get("tolkienian_word") != word2.get("tolkienian_word"):
-        return False
     if word1.get("extra_info") != word2.get("extra_info"):
         return False
-    return True
+    tw1 = word1.get("tolkienian_word")
+    tw2 = word2.get("tolkienian_word")
+    if tw1 == tw2:
+        return True
+    else:
+        return False
 
 def find_english_duplicates(all_words, word_input):
     duplicates = []
@@ -401,11 +404,18 @@ def find_english_duplicates(all_words, word_input):
 def are_english_duplicates(word1, word2):
     if word1.get("english_word") is None or word2.get("english_word") is None:
         return False
-    if word1.get("english_word") != word2.get("english_word"):
-        return False
     if word1.get("part_of_speech") != word2.get("part_of_speech"):
         return False
-    return True
+    ew1 = word1.get("english_word")
+    ew2 = word2.get("english_word")
+    UNCERTAINTY_MARKERS = ["*", "?"]
+    for marker in UNCERTAINTY_MARKERS:
+        ew1 = ew1.replace(marker, "")
+        ew2 = ew2.replace(marker, "")
+    if ew1 == ew2:
+        return True
+    else:
+        return False
 
 def is_field_same_for_all(duplicates, field):
     for word in duplicates:
@@ -481,13 +491,20 @@ def is_contained_in_variants(word, variant):
     if casingIsDifferent:
         variant = variant.lower()
 
-    for diacritic in DIACRITIC_REPLACEMENTS:
-        word = word.replace(diacritic[0], diacritic[1])
-        variant = variant.replace(diacritic[0], diacritic[1])
-    longer_variant = variant.replace("(", "").replace(")", "")
-    shorter_variant = re.sub(r'\(.*?\)', '', variant).strip()
-    word_without_markers = re.sub(MARKER_PATTERN, '', word)
-    return word_without_markers == longer_variant or word_without_markers == shorter_variant
+    if has_diacritic:
+        for diacritic in DIACRITIC_REPLACEMENTS:
+            word = word.replace(diacritic[0], diacritic[1])
+            variant = variant.replace(diacritic[0], diacritic[1])
+    
+    if has_marker:
+        word = re.sub(MARKER_PATTERN, '', word)
+    
+    if is_variant:
+        longer_variant = variant.replace("(", "").replace(")", "")
+        shorter_variant = re.sub(r'\(.*?\)', '', variant).strip()
+        return word == longer_variant or word == shorter_variant
+    else:
+        return word == variant
 
 def translations_sorter(x):
     SORTED_MARKERS = ['!', '*', '?', '†', '(lit.)', '(orig.)']
