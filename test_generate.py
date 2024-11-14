@@ -320,7 +320,7 @@ class TestGenerate(unittest.TestCase):
     def test_remove_parenthesis_and_space_duplicate_translations(self):
         words = ["end", "(the) end"]
         deduped = remove_duplicate_translations(words)
-        self.assertEqual(deduped, ["(the) end", "end"])
+        self.assertEqual(deduped, ["(the) end"])
 
     def test_merging_tolkienian_duplicates(self):
         words = [
@@ -551,7 +551,7 @@ class TestGenerate(unittest.TestCase):
 
         expected = [
             "imbë (adv)|in(wards) (adv)\n",
-            "imbë (n, Physical World)|(wide) ravine; deep vale; deep valley; dell; glen; ravine; (lit.) tween-land (n)\n",
+            "imbë (n, Physical World)|(wide) ravine; deep vale; deep valley; dell; glen; (lit.) tween-land (n)\n",
             "imbë (prep adv)|among; between (prep adv)\n",
             "imbë; niëres|hive (n)\n",
         ]

@@ -501,7 +501,7 @@ def is_contained_in_variants(word, variant):
     
     if is_variant:
         longer_variant = variant.replace("(", "").replace(")", "")
-        shorter_variant = re.sub(r'\(.*?\)', '', variant)
+        shorter_variant = re.sub(r'\(.*?\)', '', variant).strip()
         return word == longer_variant or word == shorter_variant
     else:
         return word == variant
