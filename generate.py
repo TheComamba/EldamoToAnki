@@ -46,6 +46,8 @@ SPEECH_PROPER_NAMES = "proper-name"
 SPEECH_PHRASES = "phrase"
 SPEECH_EXCLUDES = ["grammar", "phoneme", "phonetic-rule", "phonetic-group", "phonetics", "root", "text", "?"]
 
+DEFUNCT_VERBS= ["can", "could", "may", "might", "must", "ought", "quoth", "said", "says", "shall", "should", "would"]
+
 DELIMITER = "|"
 UNGLOSSED = "[unglossed]"
 
@@ -359,6 +361,8 @@ def needs_added_to(word_map, english_word):
     if english_word.startswith("(lit.) to"):
         return False
     if english_word.startswith("(orig.) to"):
+        return False
+    if english_word in DEFUNCT_VERBS:
         return False
     return True
     
