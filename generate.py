@@ -495,7 +495,7 @@ def is_contained_in_variants(word, variant):
         word = word.replace(diacritic[0], diacritic[1])
         variant = variant.replace(diacritic[0], diacritic[1])
     longer_variant = variant.replace("(", "").replace(")", "")
-    shorter_variant = re.sub(r'\(.*?\)', '', variant).strip()
+    shorter_variant = re.sub(r'\(.*?\)', '', variant)
     word_without_markers = re.sub(MARKER_PATTERN, '', word)
     return word_without_markers == longer_variant or word_without_markers == shorter_variant
 
