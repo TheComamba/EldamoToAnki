@@ -496,14 +496,15 @@ def is_contained_in_variants(word, variant):
             word = word.replace(diacritic[0], diacritic[1])
             variant = variant.replace(diacritic[0], diacritic[1])
     
+    if has_marker:
+        word = re.sub(MARKER_PATTERN, '', word)
+    
     if is_variant:
         longer_variant = variant.replace("(", "").replace(")", "")
         shorter_variant = re.sub(r'\(.*?\)', '', variant)
-    
-    if has_marker:
-        word_without_markers = re.sub(MARKER_PATTERN, '', word)
-
-    return word_without_markers == longer_variant or word_without_markers == shorter_variant
+        return word == longer_variant or word == shorter_variant
+    else:
+        return word == variant
 
 def translations_sorter(x):
     SORTED_MARKERS = ['!', '*', '?', '†', '(lit.)', '(orig.)']
