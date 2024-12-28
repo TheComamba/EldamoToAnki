@@ -17,14 +17,14 @@ The lists are:
 - [Early Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Early-Quenya.txt) (ca. 3000 cards)
 - [Gnomish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Gnomish.txt) (ca. 2700 cards)
 - [Khuzdul](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Khuzdul.txt) (ca. 40 cards)
-- [Middle Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Middle-Quenya.txt) (ca. 1700 cards)
+- [Middle Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Middle-Quenya.txt) (ca. 2100 cards)
 - [Noldorin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Noldorin.txt) (ca. 1200 cards)
 - [Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Primitive.txt) (ca. 800 cards)
-- [Neo-Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Primitive.txt) (ca. 800 cards)
+- [Neo-Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Primitive.txt) (ca. 900 cards)
 - [Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Quenya.txt) (ca. 2200 cards)
-- [Neo-Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Quenya.txt) (ca. 5400 cards)
+- [Neo-Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Quenya.txt) (ca. 5900 cards)
 - [Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Sindarin.txt) (ca. 1200 cards)
-- [Neo-Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Sindarin.txt) (ca. 3100 cards)
+- [Neo-Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Sindarin.txt) (ca. 3200 cards)
 - [Telerin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Telerin.txt) (ca. 200 words)
 
 Thanks to the very structured [input data][eldamo-data] curated by [Paul Strack][pfstrack], it is extremely easy to add more languages to that list. Just drop me an issue and I'll do that for you.
