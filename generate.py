@@ -617,19 +617,31 @@ def print_parts_of_speech(filtered_words):
     included_speech_values.sort()
     print("Collected cards of the following part of speech types:\n", included_speech_values)
 
-def is_deprecated(word, all_words):
+def is_deprecated(word, all_words, referenced_words=[]):
     if word.find('deprecated') is not None:
         return True
     ref = word.find('see')
     if ref is not None:
+        value = word.get('v')
+        if value is None:
+            return False
+        if value in referenced_words:
+            print("Circular reference detected: ", referenced_words)
+            return False
+        referenced_words.append(value)
         for word_iter in all_words:
-            if word_iter.get('v') == ref.get('v') and word_iter.get('l') == ref.get('l'):
-                return is_deprecated(word_iter, all_words)
+            ref_value = ref.get('v')
+            ref_language = ref.get('l')
+            iter_value = word_iter.get('v')
+            iter_language = word_iter.get('l')
+            if iter_value == ref_value and iter_language == ref_language:
+                return is_deprecated(word_iter, all_words, referenced_words)
+    return False
 
 def filtered_words(args, language_ids, speech_types_to_exclude, words):
     filtered = [word for word in words if word.get('l') in language_ids]
     if args.neo and not args.include_deprecated:
-        filtered = [word for word in filtered if not is_deprecated(word, filtered)]
+        filtered = [word for word in filtered if not is_deprecated(word, filtered, [])]
     filtered = [word for word in filtered if word.get('speech') not in speech_types_to_exclude]
     return filtered
 

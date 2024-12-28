@@ -2,13 +2,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Module Unittest",
+            "name": "Tests",
             "type": "debugpy",
             "request": "launch",
             "module": "unittest",
             "args": [
                 "-v",
                 "test_generate"
+            ],
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+        {
+            "name": "Neo-Quenya",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "generate.py",
+            "args": [
+                "Quenya",
+                "--neo"
             ],
             "justMyCode": true,
             "cwd": "${workspaceFolder}",
