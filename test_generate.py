@@ -480,7 +480,7 @@ class TestGenerate(unittest.TestCase):
             {"v": "sívë", "gloss": "knowing, peace; as"},
         ]
         categories = []
-        args = SimpleNamespace(verbose=False, neo=False)
+        args = SimpleNamespace(verbose=False, neo=False, include_archaic=False)
         maps = words_to_maps(words, categories, args)
         self.assertEqual(len(maps), 3)
         self.assertEqual(maps[0]["english_word"], "knowing")
@@ -492,7 +492,7 @@ class TestGenerate(unittest.TestCase):
             {"v": "Narquelion", "gloss": "Autumn", "stem": "Narqeliond-"},
         ]
         categories = []
-        args = SimpleNamespace(verbose=False, neo=False)
+        args = SimpleNamespace(verbose=False, neo=False, include_archaic=False)
         maps = words_to_maps(words, categories, args)
         self.assertEqual(len(maps), 1)
         self.assertEqual(maps[0]["tolkienian_word"], "Narquelion (Narqeliond-)")
@@ -502,7 +502,7 @@ class TestGenerate(unittest.TestCase):
             {"v": "serke", "gloss": "blood", "stem": "serki-", "l": "q"},
         ]
         categories = []
-        args = SimpleNamespace(verbose=False, neo=False)
+        args = SimpleNamespace(verbose=False, neo=False, include_archaic=False)
         maps = words_to_maps(words, categories, args)
         self.assertEqual(len(maps), 1)
         self.assertEqual(maps[0]["tolkienian_word"], "sercë (serci-)")
@@ -542,7 +542,7 @@ class TestGenerate(unittest.TestCase):
             {"l": "nq", "v": "nieres", "speech": "n", "gloss": "hive"},
         ]
         categories = [{"id": "AN", "label": "Animals"}, {"id": "PW", "label": "Physical World"}]
-        args = SimpleNamespace(verbose=False, neo=True, language='quenya', include_deprecated=False, include_origin=False)
+        args = SimpleNamespace(verbose=False, neo=True, language='quenya', include_archaic=False, include_deprecated=False, include_origin=False)
         root = list_to_xml(words)
         words = root.findall(".//word")
         maps = words_to_maps(words, categories, args)
@@ -603,7 +603,7 @@ class TestGenerate(unittest.TestCase):
         words = root.findall(".//word")
         self.assertEqual(len(words), 6)
 
-        args = SimpleNamespace(verbose=False, neo=True, language='quenya', include_deprecated=False, include_origin=False)
+        args = SimpleNamespace(verbose=False, neo=True, language='quenya', include_archaic=False, include_deprecated=False, include_origin=False)
         language_ids = ["eq", "mq", "q", "nq"]
         speech_types_to_exclude = []
         categories = []
