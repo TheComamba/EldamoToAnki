@@ -59,6 +59,7 @@ def parse_args():
     parser.add_argument('--collective-names', action='store_true', default=False, help='Include names for collective people')
     parser.add_argument('--proper-names', action='store_true', default=False, help='Include proper names')
     parser.add_argument('--phrases', action='store_true', default=False, help='Include phrases')
+    parser.add_argument('--include-archaic', action='store_true', default=False, help='Include words marked as archaic')
     parser.add_argument('--include-origin', action='store_true', default=False, help='Include the linguistic origin of the word in the card')
     parser.add_argument('--include-deprecated', action='store_true', default=False, help='Include words that Paul Strack has marked as deprecated in neo lists')
     parser.add_argument('--check-for-updates', action='store_true', default=False, help='Forces a re-download of the Eldamo database')
@@ -251,15 +252,21 @@ def normalise_quenya_spelling(word):
         if re.search(pattern[0], word["tolkienian_word"]):
             word["tolkienian_word"] = re.sub(pattern[0], pattern[1], word["tolkienian_word"])
 
-def remove_deprecated_translations(word):
-    if '⚠️' in word["english_word"]:
-        index = word["english_word"].find('⚠️')
+def remove_translations_after_marker(word, marker):
+    if marker in word["english_word"]:
+        index = word["english_word"].find(marker)
         word["english_word"] = word["english_word"][:index]
     
     word["english_word"] = word["english_word"].strip()
     
     if word["english_word"].endswith(',') or word["english_word"].endswith(';'):
         word["english_word"] = word["english_word"][:-1].strip()
+
+def remove_deprecated_translations(word):
+    remove_translations_after_marker(word, '⚠️')
+
+def remove_archaic_translations(word):
+    remove_translations_after_marker(word, '†')
 
 def remove_duplication_marker(word):
     word["tolkienian_word"] = word["tolkienian_word"].replace("¹", "")
@@ -302,6 +309,8 @@ def word_to_map(all_words, word, categories, args):
             remove_deprecated_translations(word_map)
         if not args.include_origin:
             remove_origin_marker(word_map)
+    if not args.include_archaic:
+        remove_archaic_translations(word_map)
 
     remove_duplication_marker(word_map)
 
@@ -638,10 +647,15 @@ def is_deprecated(word, all_words, referenced_words=[]):
                 return is_deprecated(word_iter, all_words, referenced_words)
     return False
 
+def is_archaic(word):
+    return word.get('mark') == "†"
+
 def filtered_words(args, language_ids, speech_types_to_exclude, words):
     filtered = [word for word in words if word.get('l') in language_ids]
     if args.neo and not args.include_deprecated:
         filtered = [word for word in filtered if not is_deprecated(word, filtered, [])]
+    if not args.include_archaic:
+        filtered = [word for word in filtered if not is_archaic(word)]
     filtered = [word for word in filtered if word.get('speech') not in speech_types_to_exclude]
     return filtered
 

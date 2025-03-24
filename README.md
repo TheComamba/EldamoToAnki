@@ -8,14 +8,14 @@ The decks for [Neo-Quenya][neo-quenya] and [Neo-Sindarin][neo-sindarin] based on
 
 Sadly, the update algorithm of Anki is suboptimal. When I share a new version, your version is not synchronised with it. Instead, you'll have to manually delete some cards specified under `update_instructions`, and import the corresponding file from anki_exports.
 
-Some lists can be found in the [`output`][output] folder of this repository. They are ready to be imported. They do not include any names or phrases. The Neo-Quenya and Neo-Sindarin lists do not include deprecated words.
+Some lists can be found in the [`output`][output] folder of this repository. They are ready to be imported. They do not include any names, phrases, or archaïc words. The Neo-Quenya and Neo-Sindarin lists do not include deprecated words.
 
 The lists are:
 - [Adunaic](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Adunaic.txt) (ca. 180 cards)
 - [Black Speech](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Black-Speech.txt) (ca. 40 cards)
 - [Early Noldorin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Early-Noldorin.txt) (ca. 700 cards)
 - [Early Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Early-Quenya.txt) (ca. 3000 cards)
-- [Gnomish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Gnomish.txt) (ca. 2700 cards)
+- [Gnomish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Gnomish.txt) (ca. 2600 cards)
 - [Khuzdul](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Khuzdul.txt) (ca. 40 cards)
 - [Middle Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Middle-Quenya.txt) (ca. 2100 cards)
 - [Noldorin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Noldorin.txt) (ca. 1200 cards)
@@ -24,7 +24,7 @@ The lists are:
 - [Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Quenya.txt) (ca. 2200 cards)
 - [Neo-Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Quenya.txt) (ca. 5900 cards)
 - [Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Sindarin.txt) (ca. 1200 cards)
-- [Neo-Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Sindarin.txt) (ca. 3200 cards)
+- [Neo-Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Sindarin.txt) (ca. 3100 cards)
 - [Telerin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Telerin.txt) (ca. 200 words)
 
 Thanks to the very structured [input data][eldamo-data] curated by [Paul Strack][pfstrack], it is extremely easy to add more languages to that list. Just drop me an issue and I'll do that for you.
@@ -43,8 +43,9 @@ You can add optional arguments:
 - `--collective-names`: Include names for collective people.
 - `--proper-names`: Include proper names.
 - `--phrases`: Include phrases.
+- `--include-archaic`: Include words and translations marked as archaïc.
 - `--include-origin`: Include the linguistic origin of the word in the card.
-- `--include-deprecated`: Include words that Paul Strack has marked as deprecated in neo lists.
+- `--include-deprecated`: Include words and translations that Paul Strack has marked as deprecated in neo lists.
 - `--check-for-updates`: Forces a re-download of the Eldamo database.
 - `--verbose`: Print more output.
 
