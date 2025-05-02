@@ -20,7 +20,7 @@ The lists are:
 - [Middle Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Middle-Quenya.txt) (ca. 2100 cards)
 - [Noldorin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Noldorin.txt) (ca. 1200 cards)
 - [Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Primitive.txt) (ca. 800 cards)
-- [Neo-Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Primitive.txt) (ca. 900 cards)
+- [Neo-Primitive Elvish](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Primitive.txt) (ca. 800 cards)
 - [Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Quenya.txt) (ca. 2200 cards)
 - [Neo-Quenya](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Neo-Quenya.txt) (ca. 5900 cards)
 - [Sindarin](https://github.com/TheComamba/EldamoToAnki/blob/main/output/Sindarin.txt) (ca. 1200 cards)

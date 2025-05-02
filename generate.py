@@ -627,7 +627,17 @@ def print_parts_of_speech(filtered_words):
     print("Collected cards of the following part of speech types:\n", included_speech_values)
 
 def is_deprecated(word, all_words, referenced_words=[]):
+    """
+    This is the relevant part for the logic:
+    https://github.com/pfstrack/eldamo/blob/master/src/main/webapp/config/query-configs/root-index.xq
+    """
     if word.find('deprecated') is not None:
+        return True
+    if word.get('mark') == "|":
+        return True
+    if word.get('mark') == "-":
+        return True
+    if word.get('mark') == "‽":
         return True
     ref = word.find('see')
     if ref is not None:
