@@ -461,7 +461,7 @@ def is_contained_in_variants(word, variant):
         return False
 
     MARKERS = ["*", "?"]
-    MARKER_PATTERN = "[\*\?]"
+    MARKER_PATTERN = r"[\*\?]"
     DIACRITIC_REPLACEMENTS = [
         ("â", "á"),
         ("Â", "Á"),
